@@ -4,16 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/clients", label: "Clients" },
-  { href: "/projects", label: "Projects" },
-  { href: "/tasks", label: "Tasks" },
-  { href: "/invoices", label: "Invoices" },
-  { href: "/team", label: "Team" },
-  { href: "/activity", label: "Activity" },
-  { href: "/analytics", label: "Analytics" },
-  { href: "/settings/notifications", label: "Settings" },
-  { href: "/settings/billing", label: "Billing" },
+  { href: "/dashboard", label: "Painel" },
+  { href: "/clients", label: "Clientes" },
+  { href: "/projects", label: "Projetos" },
+  { href: "/tasks", label: "Demandas" },
+  { href: "/invoices", label: "Faturas" },
+  { href: "/team", label: "Equipe" },
+  { href: "/activity", label: "Atividades" },
+  { href: "/analytics", label: "Métricas" },
+  { href: "/settings/notifications", label: "Configurações" },
+  { href: "/settings/billing", label: "Faturamento" },
 ];
 
 function isActive(pathname: string, href: string): boolean {

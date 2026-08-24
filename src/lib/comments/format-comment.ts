@@ -62,6 +62,7 @@ export function splitBodyIntoSegments(
 export type CommentViewModel = {
   id: string;
   authorId: string | null;
+  authorPortalUserId?: string | null;
   authorName: string;
   isEdited: boolean;
   isDeleted: boolean;
@@ -84,7 +85,9 @@ export type CommentViewModel = {
 export type CommentViewModelInput = {
   id: string;
   authorId: string | null;
+  authorPortalUserId?: string | null;
   author: { name: string } | null;
+  authorPortalUser?: { name: string } | null;
   body: string;
   editedAt: Date | null;
   deletedAt: Date | null;
@@ -102,12 +105,13 @@ export type CommentViewModelInput = {
  */
 export function formatCommentViewModel(comment: CommentViewModelInput): CommentViewModel {
   const isDeleted = comment.deletedAt !== null;
-  const authorName = comment.author?.name ?? DELETED_AUTHOR_LABEL;
+  const authorName = comment.author?.name ?? comment.authorPortalUser?.name ?? DELETED_AUTHOR_LABEL;
   const validMentionUserIds = new Set(comment.mentions.map((m) => m.userId));
 
   return {
     id: comment.id,
     authorId: comment.authorId,
+    authorPortalUserId: comment.authorPortalUserId ?? null,
     authorName,
     isEdited: comment.editedAt !== null,
     isDeleted,
@@ -136,13 +140,13 @@ export type CommentPermissions = {
  * Delete is author-or-moderator; a deleted comment gets neither.
  */
 export function resolveCommentPermissions(
-  comment: Pick<CommentViewModel, "authorId" | "isDeleted">,
+  comment: Pick<CommentViewModel, "authorId" | "authorPortalUserId" | "isDeleted">,
   currentUserId: string,
   isModerator: boolean,
 ): CommentPermissions {
   if (comment.isDeleted) {
     return { canEdit: false, canDelete: false };
   }
-  const isAuthor = comment.authorId === currentUserId;
+  const isAuthor = comment.authorId === currentUserId || comment.authorPortalUserId === currentUserId;
   return { canEdit: isAuthor, canDelete: isAuthor || isModerator };
 }

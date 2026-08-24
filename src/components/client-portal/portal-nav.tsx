@@ -4,10 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const LINKS = [
-  { href: "/portal", label: "Overview" },
-  { href: "/portal/projects", label: "Projects" },
-  { href: "/portal/invoices", label: "Invoices" },
-  { href: "/portal/profile", label: "Profile" },
+  { href: "/portal", label: "Visão Geral" },
+  { href: "/portal/projects", label: "Projetos" },
+  { href: "/portal/tasks", label: "Demandas" },
+  { href: "/portal/invoices", label: "Faturas" },
+  { href: "/portal/profile", label: "Perfil" },
 ];
 
 // "/portal" itself must only be active on an exact match — every other

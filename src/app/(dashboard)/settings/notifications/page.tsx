@@ -55,6 +55,26 @@ const NOTIFICATION_TYPE_LABELS: Record<NotificationType, { title: string; descri
     title: "Plan changed",
     description: "When your organization's billing plan changes (Owners only).",
   },
+  TASK_CREATED: {
+    title: "Demand created",
+    description: "When a new demand/task is created.",
+  },
+  TASK_STATUS_CHANGED: {
+    title: "Demand status changed",
+    description: "When a demand/task status changes.",
+  },
+  TASK_ASSIGNEE_CHANGED: {
+    title: "Demand assignee changed",
+    description: "When a demand/task is assigned to a member.",
+  },
+  TASK_DUE_DATE_CHANGED: {
+    title: "Demand due date changed",
+    description: "When a demand/task's due date is updated.",
+  },
+  TASK_COMPLETED: {
+    title: "Demand completed",
+    description: "When a demand/task is marked as completed.",
+  },
 };
 
 export default async function NotificationPreferencesPage() {

@@ -8,6 +8,7 @@ export const COMMENT_PAGE_SIZE = 20;
 
 export type CommentRow = Comment & {
   author: { id: string; name: string; email: string } | null;
+  authorPortalUser: { id: string; name: string; email: string } | null;
   mentions: Pick<CommentMention, "id" | "userId">[];
 };
 
@@ -80,6 +81,7 @@ export async function getCommentsPage(params: {
     take: limit + 1,
     include: {
       author: { select: { id: true, name: true, email: true } },
+      authorPortalUser: { select: { id: true, name: true, email: true } },
       mentions: { select: { id: true, userId: true } },
     },
   });

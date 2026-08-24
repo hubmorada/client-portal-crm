@@ -152,6 +152,38 @@ function buildPlanChanged(metadata: Record<string, unknown>): PartialModel | nul
   };
 }
 
+function buildTaskNotification(
+  type: NotificationType,
+  metadata: Record<string, unknown>,
+): PartialModel | null {
+  const title = str(metadata.title) ?? "Unnamed demand";
+  const projectName = str(metadata.projectName);
+  const actorName = str(metadata.actorName) ?? UNKNOWN_ACTOR;
+  const projectDetail = projectName ? `Project: ${projectName}` : null;
+
+  switch (type) {
+    case "TASK_CREATED":
+      return {
+        title: `${actorName} created demand "${title}"`,
+        detail: projectDetail,
+      };
+    case "TASK_STATUS_CHANGED":
+    case "TASK_COMPLETED":
+    case "TASK_ASSIGNEE_CHANGED":
+    case "TASK_DUE_DATE_CHANGED": {
+      const from = str(metadata.from);
+      const to = str(metadata.to) ?? str(metadata.status);
+      const change = from && to ? `${from} → ${to}` : `Now ${to || "updated"}`;
+      return {
+        title: `${actorName} updated demand "${title}"`,
+        detail: projectDetail ? `${change} · ${projectDetail}` : change,
+      };
+    }
+    default:
+      return null;
+  }
+}
+
 function buildModel(type: NotificationType, metadata: Record<string, unknown>): PartialModel | null {
   switch (type) {
     case "ROLE_CHANGED":
@@ -176,6 +208,12 @@ function buildModel(type: NotificationType, metadata: Record<string, unknown>): 
       return buildSubscriptionCanceled(metadata);
     case "PLAN_CHANGED":
       return buildPlanChanged(metadata);
+    case "TASK_CREATED":
+    case "TASK_STATUS_CHANGED":
+    case "TASK_ASSIGNEE_CHANGED":
+    case "TASK_DUE_DATE_CHANGED":
+    case "TASK_COMPLETED":
+      return buildTaskNotification(type, metadata);
     default:
       // Defensive only — a future enum addition without a matching case
       // here must degrade to the generic fallback, never throw.
@@ -262,6 +300,12 @@ export function resolveNotificationLinkPath(
     case "SUBSCRIPTION_CANCELED":
     case "PLAN_CHANGED":
       return "/settings/billing";
+    case "TASK_CREATED":
+    case "TASK_STATUS_CHANGED":
+    case "TASK_ASSIGNEE_CHANGED":
+    case "TASK_DUE_DATE_CHANGED":
+    case "TASK_COMPLETED":
+      return entityId ? `/tasks/${entityId}/edit` : null;
     case "PORTAL_INVITATION_ACCEPTED":
     default:
       return null;

@@ -107,3 +107,16 @@ export function buildMentionedNotificationMetadata(
     parentEntityId: str(context?.parentEntityId),
   };
 }
+
+export function buildTaskNotificationMetadata(activityMetadata: unknown): Prisma.InputJsonValue {
+  const m = isRecord(activityMetadata) ? activityMetadata : {};
+  return {
+    title: str(m.title),
+    projectName: str(m.projectName),
+    actorName: str(m.actorName),
+    status: str(m.status),
+    from: str(m.from),
+    to: str(m.to),
+    priority: str(m.priority),
+  };
+}

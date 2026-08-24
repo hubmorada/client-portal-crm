@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getCurrentPortalUser } from "@/lib/current-portal-user";
 import { getPortalProject } from "@/lib/client-portal/queries";
 import { getPortalProjectAttachments } from "@/lib/client-portal/attachments";
+import { getPortalProjectTasks } from "@/lib/client-portal/tasks";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { PortalAttachmentsList } from "@/components/client-portal/portal-attachments-list";
 
@@ -26,7 +27,10 @@ export default async function PortalProjectDetailPage({
   // The Project lookup above is already scoped by id + clientId — this
   // only re-applies the entityType/entityId/organizationId boundary on
   // the Attachment table, it does not re-verify Project ownership.
-  const attachments = await getPortalProjectAttachments(project);
+  const [attachments, tasks] = await Promise.all([
+    getPortalProjectAttachments(project),
+    getPortalProjectTasks(clientId, project.id),
+  ]);
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -80,6 +84,42 @@ export default async function PortalProjectDetailPage({
             attachments={attachments}
             emptyDescription="Files shared for this project will appear here."
           />
+        </div>
+
+        <div className="mt-8 border-t border-gray-200 pt-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-gray-900">Demands</h2>
+            <Link
+              href={`/portal/tasks/new?projectId=${project.id}`}
+              className="text-xs font-semibold text-black hover:underline"
+            >
+              + New Demand
+            </Link>
+          </div>
+          {tasks.length === 0 ? (
+            <p className="mt-2 text-sm text-gray-500">No demands created for this project.</p>
+          ) : (
+            <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200">
+              {tasks.map((task) => (
+                <li key={task.id} className="hover:bg-gray-50">
+                  <Link
+                    href={`/portal/tasks/${task.id}`}
+                    className="flex items-center justify-between px-4 py-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {task.title}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Priority: {task.priority} · {task.dueDate ? `Due ${task.dueDate.toLocaleDateString()}` : "No due date"}
+                      </p>
+                    </div>
+                    <StatusBadge status={task.status} />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>

@@ -49,6 +49,8 @@ export async function createTaskAction(
         dueDate: values.dueDate,
         completedAt: deriveCompletedAt(values.status, null),
         projectId: values.projectId,
+        createdById: user.id,
+        organizationId,
       },
     });
 

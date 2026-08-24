@@ -12,7 +12,9 @@ import { OnboardingCard, ONBOARDING_DISMISS_RETURN_FOCUS_ID } from "@/components
 import { parseDashboardPeriod, formatDashboardPeriodLabel } from "@/lib/dashboard/period";
 import { getOrganizationOnboardingProgress } from "@/lib/onboarding/progress";
 import { getDashboardAnalytics } from "./query";
-import type { RawSearchParams } from "@/lib/list-params";
+import { parseSearchParam, type RawSearchParams } from "@/lib/list-params";
+import { ClientSelector } from "@/components/dashboard/client-selector";
+import { prisma } from "@/lib/prisma";
 
 const linkClass =
   "rounded text-sm text-gray-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2";
@@ -30,11 +32,17 @@ export default async function DashboardPage({
   const { organizationId } = await getCurrentUserOrganization();
   const resolvedSearchParams = await searchParams;
   const period = parseDashboardPeriod(resolvedSearchParams.period);
+  const clientId = parseSearchParam(resolvedSearchParams.clientId);
   const now = new Date();
 
-  const [analytics, onboardingProgress] = await Promise.all([
-    getDashboardAnalytics({ organizationId, period, now }),
+  const [analytics, onboardingProgress, clients] = await Promise.all([
+    getDashboardAnalytics({ organizationId, period, now, clientId }),
     getOrganizationOnboardingProgress(organizationId),
+    prisma.client.findMany({
+      where: { organizationId },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
   ]);
 
   return (
@@ -57,7 +65,12 @@ export default async function DashboardPage({
             An overview of your clients, projects, tasks, and invoices.
           </p>
         </div>
-        <PeriodSelector period={period} />
+        <div className="flex flex-wrap items-center gap-4">
+          {clients.length > 0 && (
+            <ClientSelector clients={clients} selectedClientId={clientId} />
+          )}
+          <PeriodSelector period={period} />
+        </div>
       </div>
 
       <OnboardingCard progress={onboardingProgress} />

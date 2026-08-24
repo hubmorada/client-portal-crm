@@ -96,6 +96,25 @@ export async function getPortalInvoiceAttachments(invoice: {
 }
 
 /**
+ * Task-level (TASK) attachments. Scoped by verifying task->project->clientId first.
+ */
+export async function getPortalTaskAttachments(task: {
+  id: string;
+  title: string;
+  organizationId: string | null;
+}): Promise<PortalAttachment[]> {
+  if (!task.organizationId) return [];
+
+  const attachments = await prisma.attachment.findMany({
+    where: { entityType: "TASK", entityId: task.id, organizationId: task.organizationId },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    select: ATTACHMENT_DISPLAY_SELECT,
+  });
+
+  return attachments.map((a) => ({ ...a, parentType: "TASK" as const, parentLabel: task.title }));
+}
+
+/**
  * The sole authorization check for the portal attachment download route.
  * Takes an Attachment row found by id alone (the id is never itself a
  * trust boundary) and independently re-verifies that its entityId really
@@ -148,6 +167,17 @@ export async function verifyPortalAttachmentAccess(
       return !!invoice;
     }
 
+    case "TASK": {
+      const task = await prisma.task.findFirst({
+        where: {
+          id: attachment.entityId,
+          project: { clientId: identity.clientId },
+        },
+        select: { id: true },
+      });
+      return !!task;
+    }
+ 
     default:
       return false;
   }

@@ -42,14 +42,14 @@ export async function uploadAttachmentForEntity({
   formData,
 }: {
   organizationId: string;
-  actorId: string;
+  actorId: string | null;
   actorName: string;
   entityType: AttachmentEntityType;
   entityId: string;
   parentEntityLabel: string;
   formData: FormData;
 }): Promise<AttachmentUploadState> {
-  const limitCheck = checkRateLimit(ATTACHMENT_UPLOAD_LIMIT, actorId);
+  const limitCheck = checkRateLimit(ATTACHMENT_UPLOAD_LIMIT, actorId ?? "anonymous-portal");
   if (limitCheck.limited) {
     return { error: limitCheck.message };
   }
@@ -172,7 +172,7 @@ export async function deleteAttachmentForEntity({
   resolveParentLabel,
 }: {
   organizationId: string;
-  actorId: string;
+  actorId: string | null;
   actorName: string;
   attachmentId: string;
   entityType: AttachmentEntityType;
@@ -249,7 +249,7 @@ export async function deleteAttachmentsForParent(
     targets,
   }: {
     organizationId: string;
-    actorId: string;
+    actorId: string | null;
     actorName: string;
     targets: AttachmentParentCleanupTarget[];
   },

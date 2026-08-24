@@ -8,6 +8,7 @@ import {
   buildPortalInvitationAcceptedNotificationMetadata,
   buildInvoiceStatusChangedNotificationMetadata,
   buildMentionedNotificationMetadata,
+  buildTaskNotificationMetadata,
 } from "./notification-metadata";
 
 /**
@@ -145,6 +146,105 @@ const MENTIONED: NotificationRule = {
   buildMetadata: (activity, context) => buildMentionedNotificationMetadata(activity.metadata, context),
 };
 
+const TASK_CREATED_RULE: NotificationRule = {
+  type: "TASK_CREATED",
+  resolveRecipients: async (tx, activity) => {
+    const task = await tx.task.findUnique({
+      where: { id: activity.entityId },
+      select: {
+        createdByPortalUserId: true,
+        assigneeId: true,
+        projectId: true,
+        project: { select: { clientId: true } },
+      },
+    });
+
+    if (!task) return [];
+
+    const recipients = new Set<string>();
+
+    if (task.createdByPortalUserId) {
+      if (task.assigneeId) {
+        recipients.add(task.assigneeId);
+      }
+      const agencyMembers = await tx.membership.findMany({
+        where: { organizationId: activity.organizationId, role: { in: ["OWNER", "ADMIN"] } },
+        select: { userId: true },
+      });
+      agencyMembers.forEach((m) => recipients.add(m.userId));
+    } else {
+      if (task.project?.clientId) {
+        const portalUsers = await tx.portalUser.findMany({
+          where: { clientId: task.project.clientId },
+          select: { id: true },
+        });
+        portalUsers.forEach((pu) => recipients.add(pu.id));
+      }
+    }
+
+    return Array.from(recipients);
+  },
+  buildMetadata: (activity) => buildTaskNotificationMetadata(activity.metadata),
+};
+
+const TASK_STATUS_CHANGED_RULE: NotificationRule = {
+  type: "TASK_STATUS_CHANGED",
+  resolveRecipients: async (tx, activity) => {
+    const task = await tx.task.findUnique({
+      where: { id: activity.entityId },
+      select: {
+        assigneeId: true,
+        projectId: true,
+        project: { select: { clientId: true } },
+      },
+    });
+
+    if (!task) return [];
+
+    const recipients = new Set<string>();
+
+    if (task.assigneeId) {
+      recipients.add(task.assigneeId);
+    }
+
+    if (task.project?.clientId) {
+      const portalUsers = await tx.portalUser.findMany({
+        where: { clientId: task.project.clientId },
+        select: { id: true },
+      });
+      portalUsers.forEach((pu) => recipients.add(pu.id));
+    }
+
+    return Array.from(recipients);
+  },
+  buildMetadata: (activity) => buildTaskNotificationMetadata(activity.metadata),
+};
+
+const TASK_UPDATED_RULE: NotificationRule = {
+  type: "TASK_STATUS_CHANGED",
+  resolveRecipients: async (tx, activity) => {
+    const task = await tx.task.findUnique({
+      where: { id: activity.entityId },
+      select: {
+        assigneeId: true,
+        project: { select: { clientId: true } },
+      },
+    });
+    if (!task) return [];
+    const recipients = new Set<string>();
+    if (task.assigneeId) recipients.add(task.assigneeId);
+    if (task.project?.clientId) {
+      const portalUsers = await tx.portalUser.findMany({
+        where: { clientId: task.project.clientId },
+        select: { id: true },
+      });
+      portalUsers.forEach((pu) => recipients.add(pu.id));
+    }
+    return Array.from(recipients);
+  },
+  buildMetadata: (activity) => buildTaskNotificationMetadata(activity.metadata),
+};
+
 /**
  * Keyed by entityType then action — deliberately only the approved MVP
  * pairs. Every other (entityType, action) combination (CREATED/UPDATED/
@@ -172,6 +272,11 @@ const RULES: Partial<Record<ActivityEntityType, Partial<Record<ActivityAction, N
   COMMENT: {
     CREATED: MENTIONED,
     UPDATED: MENTIONED,
+  },
+  TASK: {
+    CREATED: TASK_CREATED_RULE,
+    STATUS_CHANGED: TASK_STATUS_CHANGED_RULE,
+    UPDATED: TASK_UPDATED_RULE,
   },
 };
 

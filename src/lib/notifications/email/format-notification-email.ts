@@ -171,6 +171,39 @@ function buildPlanChanged(metadata: Record<string, unknown>, organizationName: s
   };
 }
 
+function buildTaskNotificationEmail(
+  type: NotificationType,
+  metadata: Record<string, unknown>,
+  organizationName: string,
+): PartialContent | null {
+  const title = str(metadata.title) ?? "Unnamed demand";
+  const projectName = str(metadata.projectName);
+  const actorName = str(metadata.actorName) ?? UNKNOWN_ACTOR;
+  const projectDetail = projectName ? ` in project ${projectName}` : "";
+
+  switch (type) {
+    case "TASK_CREATED":
+      return {
+        subject: `New demand: ${title}`,
+        text: `${actorName} created a new demand "${title}"${projectDetail}.`,
+      };
+    case "TASK_STATUS_CHANGED":
+    case "TASK_COMPLETED":
+    case "TASK_ASSIGNEE_CHANGED":
+    case "TASK_DUE_DATE_CHANGED": {
+      const from = str(metadata.from);
+      const to = str(metadata.to) ?? str(metadata.status);
+      const change = from && to ? ` status changed from ${from} to ${to}` : ` status updated to ${to || "updated"}`;
+      return {
+        subject: `Demand updated: ${title}`,
+        text: `${actorName} updated demand "${title}"${projectDetail}: ${change}.`,
+      };
+    }
+    default:
+      return null;
+  }
+}
+
 function buildContent(
   type: NotificationType,
   metadata: Record<string, unknown>,
@@ -197,6 +230,12 @@ function buildContent(
       return buildSubscriptionCanceled(metadata, organizationName);
     case "PLAN_CHANGED":
       return buildPlanChanged(metadata, organizationName);
+    case "TASK_CREATED":
+    case "TASK_STATUS_CHANGED":
+    case "TASK_ASSIGNEE_CHANGED":
+    case "TASK_DUE_DATE_CHANGED":
+    case "TASK_COMPLETED":
+      return buildTaskNotificationEmail(type, metadata, organizationName);
     // INVITATION_ACCEPTED is a deliberate email non-send (see deliver-
     // notification-email.ts's EMAIL_ALLOWLIST) — never reached in
     // practice, but a safe generic fallback either way, never a throw.

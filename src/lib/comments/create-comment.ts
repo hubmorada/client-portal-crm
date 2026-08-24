@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { CommentEntityType } from "@/generated/prisma/enums";
 import { getCurrentUserOrganization } from "@/lib/current-user";
+import { getCurrentPortalUser } from "@/lib/current-portal-user";
 import { checkRateLimit, COMMENT_CREATE_LIMIT } from "@/lib/rate-limit";
 import { createActivity } from "@/lib/activity/create-activity";
 import { buildCommentCreatedMetadata } from "@/lib/activity/comment-metadata";
@@ -127,6 +128,86 @@ export async function createCommentForEntity(params: {
   // email provider outage must never roll back the comment, exactly the
   // same discipline every other notification-producing action in this app
   // already follows.
+  await deliverNotificationEmails(outcome.notificationIds);
+
+  return { ok: true, commentId: outcome.commentId };
+}
+
+/**
+ * Cria um comentário associado a um Projeto ou Tarefa a partir do Portal do Cliente.
+ * Valida o acesso com base no clientId e organizationId do PortalUser.
+ */
+export async function createPortalCommentForEntity(params: {
+  entityType: CommentEntityType;
+  entityId: string;
+  rawBody: string;
+}): Promise<CreateCommentResult> {
+  const identity = await getCurrentPortalUser();
+  const { clientId, organizationId, portalUser } = identity;
+
+  const limitCheck = checkRateLimit(COMMENT_CREATE_LIMIT, portalUser.id);
+  if (limitCheck.limited) {
+    return { ok: false, error: "rate_limited" };
+  }
+
+  const bodyValidation = validateCommentBody(params.rawBody);
+  if (!bodyValidation.ok) {
+    return { ok: false, error: bodyValidation.error === "empty" ? "empty_body" : "body_too_long" };
+  }
+  const body = bodyValidation.body;
+
+  const outcome = await prisma.$transaction(async (tx) => {
+    let targetLabel = "";
+    if (params.entityType === "PROJECT") {
+      const project = await tx.project.findFirst({
+        where: { id: params.entityId, organizationId, clientId },
+        select: { id: true, name: true },
+      });
+      if (!project) return { status: "not_found" as const };
+      targetLabel = project.name;
+    } else if (params.entityType === "TASK") {
+      const task = await tx.task.findFirst({
+        where: { id: params.entityId, project: { organizationId, clientId } },
+        select: { id: true, title: true },
+      });
+      if (!task) return { status: "not_found" as const };
+      targetLabel = task.title;
+    } else {
+      return { status: "not_found" as const };
+    }
+
+    const comment = await tx.comment.create({
+      data: {
+        organizationId,
+        authorPortalUserId: portalUser.id,
+        entityType: params.entityType,
+        entityId: params.entityId,
+        body,
+      },
+    });
+
+    const activity = await createActivity(tx, {
+      organizationId,
+      actorId: null,
+      entityType: "COMMENT",
+      entityId: comment.id,
+      action: "CREATED",
+      metadata: buildCommentCreatedMetadata({
+        parentEntityType: params.entityType,
+        parentEntityLabel: targetLabel,
+        actorName: portalUser.name,
+        commentPreview: buildCommentPreview(body),
+        mentionCount: 0,
+      }),
+    });
+
+    return { status: "created" as const, commentId: comment.id, notificationIds: activity.notificationIds };
+  });
+
+  if (outcome.status === "not_found") {
+    return { ok: false, error: "not_found" };
+  }
+
   await deliverNotificationEmails(outcome.notificationIds);
 
   return { ok: true, commentId: outcome.commentId };

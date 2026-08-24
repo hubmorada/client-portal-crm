@@ -12,7 +12,7 @@ import { formatStatusLabel } from "@/lib/format";
  * call sites.
  */
 const INVOICE_STATUS_LABEL_OVERRIDES: Readonly<Partial<Record<string, string>>> = {
-  SENT: "Issued",
+  SENT: "Emitida",
 };
 
 export function formatInvoiceStatusLabel(status: string): string {

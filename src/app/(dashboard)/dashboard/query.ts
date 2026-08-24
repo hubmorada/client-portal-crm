@@ -108,10 +108,12 @@ export async function getDashboardAnalytics({
   organizationId,
   period,
   now,
+  clientId,
 }: {
   organizationId: string;
   period: DashboardPeriod;
   now: Date;
+  clientId?: string;
 }): Promise<DashboardAnalytics> {
   const periodRange = getDashboardPeriodRange(period, now);
 
@@ -131,14 +133,14 @@ export async function getDashboardAnalytics({
     overdueInvoicesRows,
     recentInvoicesRows,
   ] = await Promise.all([
-    prisma.client.count({ where: { organizationId } }),
-    prisma.project.count({ where: { organizationId, status: "IN_PROGRESS" } }),
-    prisma.task.count({ where: { project: { organizationId }, status: { not: "DONE" } } }),
+    prisma.client.count({ where: { organizationId, ...(clientId ? { id: clientId } : {}) } }),
+    prisma.project.count({ where: { organizationId, status: "IN_PROGRESS", ...(clientId ? { clientId } : {}) } }),
+    prisma.task.count({ where: { project: { organizationId, ...(clientId ? { clientId } : {}) }, status: { not: "DONE" } } }),
     prisma.task.count({
-      where: { project: { organizationId }, status: { not: "DONE" }, dueDate: { lt: now } },
+      where: { project: { organizationId, ...(clientId ? { clientId } : {}) }, status: { not: "DONE" }, dueDate: { lt: now } },
     }),
     prisma.invoice.aggregate({
-      where: { organizationId, project: { organizationId }, status: { in: [...UNPAID_INVOICE_STATUSES] } },
+      where: { organizationId, project: { organizationId, ...(clientId ? { clientId } : {}) }, status: { in: [...UNPAID_INVOICE_STATUSES] } },
       _sum: { amount: true },
     }),
     // Selected once, used for both the paidRevenue KPI (sum) and the
@@ -146,7 +148,7 @@ export async function getDashboardAnalytics({
     prisma.invoice.findMany({
       where: {
         organizationId,
-        project: { organizationId },
+        project: { organizationId, ...(clientId ? { clientId } : {}) },
         status: "PAID",
         paidAt: { not: null, gte: periodRange.start, lte: periodRange.end },
       },
@@ -154,17 +156,17 @@ export async function getDashboardAnalytics({
     }),
     prisma.invoice.groupBy({
       by: ["status"],
-      where: { organizationId, project: { organizationId } },
+      where: { organizationId, project: { organizationId, ...(clientId ? { clientId } : {}) } },
       _count: true,
     }),
     prisma.task.groupBy({
       by: ["status"],
-      where: { project: { organizationId } },
+      where: { project: { organizationId, ...(clientId ? { clientId } : {}) } },
       _count: true,
     }),
     prisma.project.groupBy({
       by: ["status"],
-      where: { organizationId },
+      where: { organizationId, ...(clientId ? { clientId } : {}) },
       _count: true,
     }),
     prisma.activity.findMany({
@@ -174,13 +176,13 @@ export async function getDashboardAnalytics({
       include: { actor: { select: { name: true, email: true } } },
     }),
     prisma.task.findMany({
-      where: { project: { organizationId }, status: { not: "DONE" }, dueDate: { not: null, gte: now } },
+      where: { project: { organizationId, ...(clientId ? { clientId } : {}) }, status: { not: "DONE" }, dueDate: { not: null, gte: now } },
       orderBy: { dueDate: "asc" },
       take: LIST_TAKE,
       include: { project: { select: { name: true } } },
     }),
     prisma.task.findMany({
-      where: { project: { organizationId }, status: { not: "DONE" }, dueDate: { lt: now } },
+      where: { project: { organizationId, ...(clientId ? { clientId } : {}) }, status: { not: "DONE" }, dueDate: { lt: now } },
       orderBy: { dueDate: "asc" },
       take: LIST_TAKE,
       include: { project: { select: { name: true } } },
@@ -190,13 +192,13 @@ export async function getDashboardAnalytics({
     // dueDate is nullable in the schema; excluded here since a due-date-
     // sorted list has nothing meaningful to do with a null one.
     prisma.invoice.findMany({
-      where: { organizationId, project: { organizationId }, status: "OVERDUE", dueDate: { not: null } },
+      where: { organizationId, project: { organizationId, ...(clientId ? { clientId } : {}) }, status: "OVERDUE", dueDate: { not: null } },
       orderBy: { dueDate: "asc" },
       take: LIST_TAKE,
       include: { project: { select: { client: { select: { name: true } } } } },
     }),
     prisma.invoice.findMany({
-      where: { organizationId, project: { organizationId } },
+      where: { organizationId, project: { organizationId, ...(clientId ? { clientId } : {}) } },
       orderBy: { createdAt: "desc" },
       take: LIST_TAKE,
       include: { project: { select: { client: { select: { name: true } } } } },

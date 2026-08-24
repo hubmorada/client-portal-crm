@@ -30,6 +30,11 @@ export const NOTIFICATION_TYPES = [
   "PAYMENT_FAILED",
   "SUBSCRIPTION_CANCELED",
   "PLAN_CHANGED",
+  "TASK_CREATED",
+  "TASK_STATUS_CHANGED",
+  "TASK_ASSIGNEE_CHANGED",
+  "TASK_DUE_DATE_CHANGED",
+  "TASK_COMPLETED",
 ] as const satisfies readonly NotificationType[];
 
 export type NotificationPreferenceValue = {
