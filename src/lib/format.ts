@@ -28,6 +28,11 @@ const TRANSLATIONS: Record<string, string> = {
   ACCEPTED: "Aceito",
   EXPIRED: "Expirado",
   REVOKED: "Revogado",
+  // Status de Onboarding
+  SKIPPED: "Ignorado",
+  COMPLETE: "Concluído",
+  NOT_STARTED: "Não iniciado",
+  NOT_APPLICABLE: "Não aplicável",
 };
 
 export function formatCurrency(amount: number, currency = "BRL"): string {

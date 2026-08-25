@@ -246,7 +246,9 @@ export function getOnboardingStep(key: OnboardingStepKey): OnboardingStepDefinit
  * scattered checks" precedent.
  */
 export function isOnboardingStepAvailable(key: OnboardingStepKey): boolean {
-  void key;
+  if (key === "PAYMENT_DETAILS" || key === "REVIEW_BILLING") {
+    return false;
+  }
   return true;
 }
 

@@ -73,11 +73,13 @@ export function OnboardingCard({ progress }: { progress: OnboardingProgressSumma
       </div>
 
       <ul className="mt-6 divide-y divide-gray-200">
-        {progress.steps.map((step) => (
-          <li key={step.key} className="py-4 first:pt-0 last:pb-0">
-            <OnboardingStepRow step={step} />
-          </li>
-        ))}
+        {progress.steps
+          .filter((step) => step.status !== "NOT_APPLICABLE")
+          .map((step) => (
+            <li key={step.key} className="py-4 first:pt-0 last:pb-0">
+              <OnboardingStepRow step={step} />
+            </li>
+          ))}
       </ul>
     </section>
   );
