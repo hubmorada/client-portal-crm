@@ -36,7 +36,7 @@ export function SearchFilterBar({
     >
       <div className="min-w-48 flex-1">
         <label htmlFor="q" className="block text-sm font-medium text-gray-700">
-          Search
+          Buscar
         </label>
         <Input
           id="q"
@@ -68,7 +68,7 @@ export function SearchFilterBar({
       {sort && (
         <div className="w-44">
           <label htmlFor="sort" className="block text-sm font-medium text-gray-700">
-            Sort by
+            Ordenar por
           </label>
           <AutoSubmitSelect id="sort" name="sort" defaultValue={sort.value}>
             {sort.options.map((option) => (
@@ -81,13 +81,13 @@ export function SearchFilterBar({
       )}
 
       <div className="flex items-center gap-3">
-        <Button type="submit">Search</Button>
+        <Button type="submit">Buscar</Button>
         {hasActiveParams && (
           <Link
             href={basePath}
             className="rounded text-sm text-gray-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
           >
-            Clear
+            Limpar
           </Link>
         )}
       </div>

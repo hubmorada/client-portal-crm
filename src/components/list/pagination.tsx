@@ -29,11 +29,11 @@ export function Pagination({
 
   return (
     <nav
-      aria-label="Pagination"
+      aria-label="Paginação"
       className="mt-4 flex items-center justify-between text-sm text-gray-600"
     >
       <p>
-        Page {page} of {totalPages}
+        Página {page} de {totalPages}
       </p>
       <div className="flex items-center gap-2">
         {hasPrev ? (
@@ -41,14 +41,14 @@ export function Pagination({
             href={buildHref(basePath, params, page - 1)}
             className={`${NAV_BUTTON_CLASS} border-gray-300 text-gray-700 hover:bg-gray-50`}
           >
-            Previous
+            Anterior
           </Link>
         ) : (
           <span
             aria-disabled="true"
             className={`${NAV_BUTTON_CLASS} cursor-not-allowed border-gray-200 text-gray-300`}
           >
-            Previous
+            Anterior
           </span>
         )}
         {hasNext ? (
@@ -56,14 +56,14 @@ export function Pagination({
             href={buildHref(basePath, params, page + 1)}
             className={`${NAV_BUTTON_CLASS} border-gray-300 text-gray-700 hover:bg-gray-50`}
           >
-            Next
+            Próximo
           </Link>
         ) : (
           <span
             aria-disabled="true"
             className={`${NAV_BUTTON_CLASS} cursor-not-allowed border-gray-200 text-gray-300`}
           >
-            Next
+            Próximo
           </span>
         )}
       </div>

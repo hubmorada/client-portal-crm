@@ -9,7 +9,6 @@ export function LeaveOrganizationButton({
   disabled = false,
   disabledReason,
 }: {
-  /** leaveOrganizationAction — takes no arguments, redirects on success. */
   action: () => Promise<void>;
   disabled?: boolean;
   disabledReason?: string;
@@ -21,13 +20,10 @@ export function LeaveOrganizationButton({
   async function handleConfirm() {
     setPending(true);
     try {
-      // On success this redirects (and never returns) — a toast for that
-      // case is shown by the destination page via the action's own
-      // redirect(withToast(...)). We only need to handle the error path.
       await action();
     } catch (err) {
       showToast(
-        err instanceof Error ? err.message : "Failed to leave the organization.",
+        err instanceof Error ? err.message : "Não foi possível sair da organização.",
         "error",
       );
     } finally {
@@ -43,16 +39,17 @@ export function LeaveOrganizationButton({
         onClick={() => dialogRef.current?.open()}
         className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        Leave organization
+        Sair da organização
       </button>
       {disabled && disabledReason && (
         <p className="mt-1 text-xs text-gray-500">{disabledReason}</p>
       )}
       <ConfirmDialog
         ref={dialogRef}
-        title="Leave organization"
-        description="Are you sure you want to leave this organization? You'll lose access to its clients, projects, tasks, and invoices."
-        confirmLabel="Leave"
+        title="Sair da organização"
+        description="Tem certeza de que deseja sair desta organização? Você perderá o acesso aos clientes, projetos e demandas."
+        confirmLabel="Sair"
+        cancelLabel="Cancelar"
         destructive
         onConfirm={handleConfirm}
       />

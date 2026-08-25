@@ -16,8 +16,8 @@ export function ConfirmDialog({
   ref,
   title,
   description,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
+  confirmLabel = "Confirmar",
+  cancelLabel = "Cancelar",
   destructive = false,
   onConfirm,
 }: {

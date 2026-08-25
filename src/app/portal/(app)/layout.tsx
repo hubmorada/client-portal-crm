@@ -49,7 +49,7 @@ export default async function PortalAppLayout({
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <div>
             <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
-              Client Portal
+              Portal do Cliente
             </p>
             <p className="text-sm font-semibold text-gray-900">{identity.client.name}</p>
           </div>
@@ -63,7 +63,7 @@ export default async function PortalAppLayout({
                 type="submit"
                 className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
               >
-                Sign out
+                Sair
               </button>
             </form>
           </div>
