@@ -26,7 +26,7 @@ export function ClientSelector({
   return (
     <div>
       <label htmlFor="client-select" className="block text-xs font-medium text-gray-500">
-        Filter by Client
+        Filtrar por Cliente
       </label>
       <select
         id="client-select"
@@ -34,7 +34,7 @@ export function ClientSelector({
         onChange={handleChange}
         className="mt-1 block w-[240px] rounded-md border border-gray-300 bg-white py-1.5 pl-3 pr-10 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
       >
-        <option value="">All Clients (Full Agency View)</option>
+        <option value="">Todos os Clientes (Visão Geral)</option>
         {clients.map((client) => (
           <option key={client.id} value={client.id}>
             {client.name}

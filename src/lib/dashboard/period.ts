@@ -5,17 +5,17 @@ export const DASHBOARD_PERIODS = ["7d", "30d", "90d", "year"] as const satisfies
 export const DEFAULT_DASHBOARD_PERIOD: DashboardPeriod = "30d";
 
 export const DASHBOARD_PERIOD_OPTIONS: readonly { value: DashboardPeriod; label: string }[] = [
-  { value: "7d", label: "7 days" },
-  { value: "30d", label: "30 days" },
-  { value: "90d", label: "90 days" },
-  { value: "year", label: "Year to date" },
+  { value: "7d", label: "7 dias" },
+  { value: "30d", label: "30 dias" },
+  { value: "90d", label: "90 dias" },
+  { value: "year", label: "Desde o início do ano" },
 ];
 
 const DASHBOARD_PERIOD_HINTS: Record<DashboardPeriod, string> = {
-  "7d": "Last 7 days",
-  "30d": "Last 30 days",
-  "90d": "Last 90 days",
-  year: "Year to date",
+  "7d": "Últimos 7 dias",
+  "30d": "Últimos 30 dias",
+  "90d": "Últimos 90 dias",
+  year: "Desde o início do ano",
 };
 
 /** Short human label for period-scoped values (the Paid revenue KPI, the revenue chart caption). */

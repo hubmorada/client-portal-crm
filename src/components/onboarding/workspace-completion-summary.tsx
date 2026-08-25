@@ -25,9 +25,9 @@ export function WorkspaceCompletionSummary({ summary }: { summary: WorkspaceComp
   return (
     <div className="mt-3 space-y-1 text-sm text-gray-600">
       {completedSteps.length > 0 && (
-        <p>{`Completed so far: ${completedSteps.map((step) => step.label).join(", ")}.`}</p>
+        <p>{`Concluído até aqui: ${completedSteps.map((step) => step.label).join(", ")}.`}</p>
       )}
-      {nextActions.length > 0 && <p>{`Up next: ${nextActions.map((step) => step.label).join(", ")}.`}</p>}
+      {nextActions.length > 0 && <p>{`Próximos passos: ${nextActions.map((step) => step.label).join(", ")}.`}</p>}
     </div>
   );
 }

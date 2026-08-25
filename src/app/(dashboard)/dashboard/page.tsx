@@ -59,10 +59,10 @@ export default async function DashboardPage({
             tabIndex={-1}
             className="rounded text-2xl font-semibold tracking-tight text-gray-900 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
           >
-            Dashboard
+            Painel
           </h1>
           <p className="mt-1 text-sm text-gray-600">
-            An overview of your clients, projects, tasks, and invoices.
+            Uma visão geral de seus clientes, projetos, demandas e faturas.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-4">
@@ -76,25 +76,25 @@ export default async function DashboardPage({
       <OnboardingCard progress={onboardingProgress} />
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-6">
-        <MetricCard label="Total clients" value={analytics.kpis.totalClients} href="/clients" />
+        <MetricCard label="Total de clientes" value={analytics.kpis.totalClients} href="/clients" />
         <MetricCard
-          label="Active projects"
+          label="Projetos ativos"
           value={analytics.kpis.activeProjects}
           href="/projects"
         />
-        <MetricCard label="Open tasks" value={analytics.kpis.openTasks} href="/tasks" />
+        <MetricCard label="Demandas abertas" value={analytics.kpis.openTasks} href="/tasks" />
         <MetricCard
-          label="Overdue tasks"
+          label="Demandas atrasadas"
           value={analytics.kpis.overdueTasksCount}
           href="/tasks"
         />
         <MetricCard
-          label="Outstanding amount"
+          label="Valor pendente"
           value={formatCurrency(analytics.kpis.outstandingAmount)}
           href="/invoices"
         />
         <MetricCard
-          label="Paid revenue"
+          label="Faturamento recebido"
           value={formatCurrency(analytics.kpis.paidRevenue)}
           href="/invoices"
           hint={formatDashboardPeriodLabel(period)}
@@ -109,11 +109,11 @@ export default async function DashboardPage({
       />
 
       <div>
-        <h2 className="text-lg font-semibold tracking-tight text-gray-900">Breakdowns</h2>
+        <h2 className="text-lg font-semibold tracking-tight text-gray-900">Distribuição</h2>
         <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <BreakdownCard title="Invoice status" items={analytics.breakdowns.invoiceStatus} labelFormatter={formatInvoiceStatusLabel} />
-          <BreakdownCard title="Task status" items={analytics.breakdowns.taskStatus} />
-          <BreakdownCard title="Project status" items={analytics.breakdowns.projectStatus} />
+          <BreakdownCard title="Status das faturas" items={analytics.breakdowns.invoiceStatus} labelFormatter={formatInvoiceStatusLabel} />
+          <BreakdownCard title="Status das demandas" items={analytics.breakdowns.taskStatus} />
+          <BreakdownCard title="Status dos projetos" items={analytics.breakdowns.projectStatus} />
         </div>
       </div>
 
@@ -122,13 +122,13 @@ export default async function DashboardPage({
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <section className="rounded-lg border border-gray-200 bg-white p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-900">Upcoming tasks</h3>
+            <h3 className="text-sm font-semibold text-gray-900">Próximas demandas</h3>
             <Link href="/tasks" className={linkClass}>
-              View all
+              Ver todas
             </Link>
           </div>
           {analytics.upcomingTasks.length === 0 ? (
-            <p className="text-sm text-gray-500">No upcoming tasks.</p>
+            <p className="text-sm text-gray-500">Nenhuma demanda próxima.</p>
           ) : (
             <ul className="divide-y divide-gray-200">
               {analytics.upcomingTasks.map((task) => (
@@ -138,7 +138,7 @@ export default async function DashboardPage({
                   </Link>
                   <p className="text-sm text-gray-500">{task.projectName}</p>
                   <p className="mt-1 text-xs text-gray-500">
-                    Due {task.dueDate.toLocaleDateString()}
+                    Prazo: {task.dueDate.toLocaleDateString()}
                   </p>
                 </li>
               ))}
@@ -147,16 +147,16 @@ export default async function DashboardPage({
         </section>
 
         <section className="rounded-lg border border-gray-200 bg-white p-6">
-          <h3 className="mb-4 text-sm font-semibold text-gray-900">Overdue items</h3>
+          <h3 className="mb-4 text-sm font-semibold text-gray-900">Itens atrasados</h3>
           {analytics.overdueItems.length === 0 ? (
-            <p className="text-sm text-gray-500">Nothing overdue.</p>
+            <p className="text-sm text-gray-500">Nada atrasado.</p>
           ) : (
             <ul className="divide-y divide-gray-200">
               {analytics.overdueItems.map((item) => (
                 <li key={`${item.kind}-${item.id}`} className="py-3 first:pt-0 last:pb-0">
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
-                      {item.kind === "task" ? "Task" : "Invoice"}
+                      {item.kind === "task" ? "Demanda" : "Fatura"}
                     </span>
                     <Link
                       href={item.kind === "task" ? `/tasks/${item.id}/edit` : `/invoices/${item.id}/edit`}
@@ -170,7 +170,7 @@ export default async function DashboardPage({
                     {item.kind === "invoice" && ` · ${formatCurrency(item.amount, item.currency)}`}
                   </p>
                   <p className="mt-0.5 text-xs text-red-600">
-                    Due {item.dueDate.toLocaleDateString()}
+                    Prazo: {item.dueDate.toLocaleDateString()}
                   </p>
                 </li>
               ))}
@@ -180,13 +180,13 @@ export default async function DashboardPage({
 
         <section className="rounded-lg border border-gray-200 bg-white p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-900">Recent invoices</h3>
+            <h3 className="text-sm font-semibold text-gray-900">Faturas recentes</h3>
             <Link href="/invoices" className={linkClass}>
-              View all
+              Ver todas
             </Link>
           </div>
           {analytics.recentInvoices.length === 0 ? (
-            <p className="text-sm text-gray-500">No invoices yet.</p>
+            <p className="text-sm text-gray-500">Nenhuma fatura ainda.</p>
           ) : (
             <ul className="divide-y divide-gray-200">
               {analytics.recentInvoices.map((invoice) => (

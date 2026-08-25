@@ -39,7 +39,7 @@ export function DismissOnboardingButton({ returnFocusId }: { returnFocusId: stri
       onClick={handleClick}
       className="shrink-0 rounded text-sm font-medium text-gray-500 transition-colors hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
     >
-      {isPending ? "Hiding…" : "Dismiss onboarding"}
+      {isPending ? "Ocultando..." : "Ocultar checklist"}
     </button>
   );
 }

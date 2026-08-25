@@ -90,7 +90,7 @@ export const ONBOARDING_STEPS: Readonly<Record<OnboardingStepKey, OnboardingStep
   WELCOME: {
     key: "WELCOME",
     order: 0,
-    label: "Welcome",
+    label: "Boas-vindas",
     computed: false,
     skippable: false,
     required: false,
@@ -106,7 +106,7 @@ export const ONBOARDING_STEPS: Readonly<Record<OnboardingStepKey, OnboardingStep
   COMPANY_PROFILE: {
     key: "COMPANY_PROFILE",
     order: 1,
-    label: "Set up your company profile",
+    label: "Configure o perfil da sua empresa",
     computed: true,
     skippable: false,
     required: true,
@@ -119,7 +119,7 @@ export const ONBOARDING_STEPS: Readonly<Record<OnboardingStepKey, OnboardingStep
   PAYMENT_DETAILS: {
     key: "PAYMENT_DETAILS",
     order: 2,
-    label: "Add payment receiving details",
+    label: "Adicione os dados para recebimento",
     computed: true,
     skippable: true,
     required: false,
@@ -132,7 +132,7 @@ export const ONBOARDING_STEPS: Readonly<Record<OnboardingStepKey, OnboardingStep
   DOMAIN_SETUP: {
     key: "DOMAIN_SETUP",
     order: 3,
-    label: "Review your domain settings",
+    label: "Revise as configurações de domínio",
     computed: true,
     skippable: true,
     required: false,
@@ -142,7 +142,7 @@ export const ONBOARDING_STEPS: Readonly<Record<OnboardingStepKey, OnboardingStep
   CREATE_CLIENT: {
     key: "CREATE_CLIENT",
     order: 4,
-    label: "Create your first client",
+    label: "Crie seu primeiro cliente",
     computed: true,
     skippable: false,
     required: true,
@@ -152,7 +152,7 @@ export const ONBOARDING_STEPS: Readonly<Record<OnboardingStepKey, OnboardingStep
   CREATE_PROJECT: {
     key: "CREATE_PROJECT",
     order: 5,
-    label: "Create your first project",
+    label: "Crie seu primeiro projeto",
     computed: true,
     skippable: false,
     required: true,
@@ -162,7 +162,7 @@ export const ONBOARDING_STEPS: Readonly<Record<OnboardingStepKey, OnboardingStep
   CREATE_TASK: {
     key: "CREATE_TASK",
     order: 6,
-    label: "Create your first task",
+    label: "Crie sua primeira demanda",
     computed: true,
     skippable: true,
     required: false,
@@ -172,7 +172,7 @@ export const ONBOARDING_STEPS: Readonly<Record<OnboardingStepKey, OnboardingStep
   INVITE_TEAMMATE: {
     key: "INVITE_TEAMMATE",
     order: 7,
-    label: "Invite a teammate",
+    label: "Convide um membro da equipe",
     computed: true,
     skippable: true,
     required: false,
@@ -182,7 +182,7 @@ export const ONBOARDING_STEPS: Readonly<Record<OnboardingStepKey, OnboardingStep
   INVITE_PORTAL_USER: {
     key: "INVITE_PORTAL_USER",
     order: 8,
-    label: "Invite a Client Portal user",
+    label: "Convide um usuário para o portal",
     computed: true,
     skippable: true,
     required: false,
@@ -197,7 +197,7 @@ export const ONBOARDING_STEPS: Readonly<Record<OnboardingStepKey, OnboardingStep
   REVIEW_BILLING: {
     key: "REVIEW_BILLING",
     order: 9,
-    label: "Review billing",
+    label: "Revise o faturamento",
     computed: false,
     skippable: true,
     required: false,
@@ -215,7 +215,7 @@ export const ONBOARDING_STEPS: Readonly<Record<OnboardingStepKey, OnboardingStep
   FINISH: {
     key: "FINISH",
     order: 10,
-    label: "Finish setup",
+    label: "Concluir configuração",
     computed: false,
     skippable: false,
     required: false,

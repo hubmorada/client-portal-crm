@@ -10,7 +10,7 @@ export function PeriodSelector({ period }: { period: DashboardPeriod }) {
   return (
     <div>
       <span id="dashboard-period-label" className="block text-xs font-medium text-gray-500">
-        Period
+        Período
       </span>
       <div
         role="group"
@@ -34,8 +34,7 @@ export function PeriodSelector({ period }: { period: DashboardPeriod }) {
         })}
       </div>
       <p className="mt-1 text-xs text-gray-500">
-        Only Paid revenue and Revenue over time change with this — everything else always reflects the
-        current state.
+        Apenas o faturamento recebido e a receita ao longo do tempo mudam com isso — todo o resto sempre reflete o estado atual.
       </p>
     </div>
   );

@@ -33,8 +33,8 @@ export type WorkspaceCompletionSummary = {
   nextActions: OnboardingStepResult[];
 };
 
-const HEADLINE = "Your workspace is almost ready";
-const SUBHEADLINE = "Complete setup to start using Client Portal.";
+const HEADLINE = "Seu espaço de trabalho está quase pronto";
+const SUBHEADLINE = "Conclua a configuração para começar a usar o Portal do Cliente.";
 
 const MAX_NEXT_ACTIONS = 3;
 

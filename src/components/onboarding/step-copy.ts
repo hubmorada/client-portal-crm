@@ -8,15 +8,15 @@ import type { OnboardingStepKey } from "@/generated/prisma/enums";
  * explicitly scopes it to "use only Stage 2 backend."
  */
 export const ONBOARDING_STEP_DESCRIPTIONS: Record<OnboardingStepKey, string> = {
-  WELCOME: "A quick checklist to help you get the most out of your workspace.",
-  COMPANY_PROFILE: "Add your legal name, country, currency, and time zone.",
-  PAYMENT_DETAILS: "Tell clients where to send your payments.",
-  DOMAIN_SETUP: "Review your workspace address and an optional custom domain.",
-  CREATE_CLIENT: "Add the people or businesses you work with.",
-  CREATE_PROJECT: "Organize your work into projects for each client.",
-  CREATE_TASK: "Break a project down into tasks you can track.",
-  INVITE_TEAMMATE: "Bring a colleague into your organization.",
-  INVITE_PORTAL_USER: "Give a client secure access to their own portal.",
-  REVIEW_BILLING: "Review your plan and billing details.",
-  FINISH: "Hide this checklist once you're all set — you can always come back.",
+  WELCOME: "Uma lista rápida para te ajudar a aproveitar ao máximo seu espaço de trabalho.",
+  COMPANY_PROFILE: "Adicione sua razão social, país, moeda e fuso horário.",
+  PAYMENT_DETAILS: "Informe aos clientes onde enviar seus pagamentos.",
+  DOMAIN_SETUP: "Revise o endereço do seu espaço de trabalho e um domínio personalizado opcional.",
+  CREATE_CLIENT: "Adicione as pessoas ou empresas com quem você trabalha.",
+  CREATE_PROJECT: "Organize seu trabalho em projetos para cada cliente.",
+  CREATE_TASK: "Divida um projeto em demandas que você possa acompanhar.",
+  INVITE_TEAMMATE: "Traga um colega para a sua organização.",
+  INVITE_PORTAL_USER: "Dê a um cliente acesso seguro ao seu próprio portal.",
+  REVIEW_BILLING: "Revise seu plano e detalhes de faturamento.",
+  FINISH: "Oculte esta lista quando estiver tudo pronto — você sempre poderá voltar.",
 };

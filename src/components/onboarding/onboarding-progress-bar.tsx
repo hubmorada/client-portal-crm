@@ -17,7 +17,7 @@ export function OnboardingProgressBar({
     <div>
       <div className="flex items-center justify-between text-sm">
         <span className="font-medium text-gray-900">
-          {completedCount} of {totalCount} complete
+          {completedCount} de {totalCount} concluídos
         </span>
         <span className="text-gray-600">{percent}%</span>
       </div>
@@ -26,8 +26,8 @@ export function OnboardingProgressBar({
         aria-valuenow={percent}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-valuetext={`${completedCount} of ${totalCount} complete`}
-        aria-label="Onboarding progress"
+        aria-valuetext={`${completedCount} de ${totalCount} concluídos`}
+        aria-label="Progresso da integração"
         className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-100"
       >
         <div
