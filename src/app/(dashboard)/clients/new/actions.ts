@@ -9,6 +9,7 @@ import { withToast } from "@/lib/toast-url";
 import { createActivity } from "@/lib/activity/create-activity";
 import { buildClientActivityMetadata } from "@/lib/activity/client-metadata";
 import { assertCanCreateClient, BillingLimitError } from "@/lib/billing/enforcement";
+import { sendClientWelcomeEmail } from "@/lib/email/client-welcome";
 import type { ClientFormState } from "@/types";
 
 export async function createClientAction(
@@ -22,6 +23,8 @@ export async function createClientAction(
   }
 
   const { user, organizationId } = await getCurrentUserOrganization();
+
+  let createdClient: { id: string; name: string; email: string | null; company: string | null } | null = null;
 
   try {
     // Client create and its Activity row are one atomic unit — if the
@@ -37,6 +40,8 @@ export async function createClientAction(
         data: { ...values, userId: user.id, organizationId },
       });
 
+      createdClient = client;
+
       await createActivity(tx, {
         organizationId,
         actorId: user.id,
@@ -46,6 +51,24 @@ export async function createClientAction(
         metadata: buildClientActivityMetadata(client, user.name),
       });
     });
+
+    if (createdClient && (createdClient as any).email) {
+      const org = await prisma.organization.findUnique({
+        where: { id: organizationId },
+        select: { name: true },
+      });
+
+      try {
+        await sendClientWelcomeEmail({
+          to: (createdClient as any).email,
+          clientName: (createdClient as any).name,
+          companyName: (createdClient as any).company,
+          organizationName: org?.name ?? "Nossa Agência",
+        });
+      } catch (emailErr) {
+        console.error("Falha ao enviar e-mail de boas-vindas:", emailErr);
+      }
+    }
   } catch (err) {
     if (err instanceof BillingLimitError) {
       return { error: err.message };
@@ -56,11 +79,11 @@ export async function createClientAction(
     ) {
       return {
         error: null,
-        fieldErrors: { email: "A client with this email already exists." },
+        fieldErrors: { email: "Um cliente com este e-mail já existe." },
       };
     }
     throw err;
   }
 
-  redirect(withToast("/clients", "Client created"));
+  redirect(withToast("/clients", "Cliente cadastrado com sucesso"));
 }

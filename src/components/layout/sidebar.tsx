@@ -8,12 +8,10 @@ const links = [
   { href: "/clients", label: "Clientes" },
   { href: "/projects", label: "Projetos" },
   { href: "/tasks", label: "Demandas" },
-  { href: "/invoices", label: "Faturas" },
   { href: "/team", label: "Equipe" },
   { href: "/activity", label: "Atividades" },
   { href: "/analytics", label: "Métricas" },
   { href: "/settings/notifications", label: "Configurações" },
-  { href: "/settings/billing", label: "Faturamento" },
 ];
 
 function isActive(pathname: string, href: string): boolean {

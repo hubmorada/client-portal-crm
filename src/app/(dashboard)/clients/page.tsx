@@ -68,31 +68,31 @@ export default async function ClientsPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
-            Clients
+            Clientes
           </h1>
           <p className="mt-1 text-sm text-gray-600">
-            {total} {total === 1 ? "client" : "clients"}
+            {total} {total === 1 ? "cliente" : "clientes"}
           </p>
         </div>
         <Link
           href="/clients/new"
           className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
         >
-          Add client
+          Novo cliente
         </Link>
       </div>
 
       <SearchFilterBar
         basePath="/clients"
         searchValue={listParams.q}
-        searchPlaceholder="Search by name, company, or email"
+        searchPlaceholder="Buscar por nome, empresa ou e-mail"
         filters={[
           {
             name: "status",
             label: "Status",
             value: listParams.status ?? "",
             options: [
-              { value: "", label: "All statuses" },
+              { value: "", label: "Todos os status" },
               ...CLIENT_STATUSES.map((status) => ({
                 value: status,
                 label: formatStatusLabel(status),
@@ -100,7 +100,12 @@ export default async function ClientsPage({
             ],
           },
         ]}
-        sort={{ value: listParams.sortCombined, options: SORT_OPTIONS }}
+        sort={{ value: listParams.sortCombined, options: [
+          { value: "createdAt:desc", label: "Mais recentes" },
+          { value: "createdAt:asc", label: "Mais antigos" },
+          { value: "name:asc", label: "Nome (A–Z)" },
+          { value: "name:desc", label: "Nome (Z–A)" },
+        ] }}
         hasActiveParams={hasActiveParams}
       />
 
@@ -138,41 +143,72 @@ export default async function ClientsPage({
             <Table>
               <TableHead>
                 <tr>
-                  <TableHeaderCell>Name</TableHeaderCell>
-                  <TableHeaderCell>Company</TableHeaderCell>
-                  <TableHeaderCell>Email</TableHeaderCell>
-                  <TableHeaderCell>Phone</TableHeaderCell>
+                  <TableHeaderCell>Nome</TableHeaderCell>
+                  <TableHeaderCell>Empresa (Abrir Kanban)</TableHeaderCell>
+                  <TableHeaderCell>E-mail</TableHeaderCell>
+                  <TableHeaderCell>Telefone</TableHeaderCell>
                   <TableHeaderCell>Status</TableHeaderCell>
-                  <TableHeaderCell>Created</TableHeaderCell>
-                  <TableHeaderCell align="right">Actions</TableHeaderCell>
+                  <TableHeaderCell>Criado em</TableHeaderCell>
+                  <TableHeaderCell align="right">Ações</TableHeaderCell>
                 </tr>
               </TableHead>
               <TableBody>
                 {clients.map((client) => (
                   <TableRow key={client.id}>
-                    <TableCell emphasis>{client.name}</TableCell>
-                    <TableCell>{client.company ?? "—"}</TableCell>
+                    <TableCell emphasis>
+                      <Link
+                        href={`/tasks?view=kanban&clientId=${client.id}`}
+                        title="Ver demandas no Kanban deste cliente"
+                        className="hover:underline font-semibold text-gray-900"
+                      >
+                        {client.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      {client.company ? (
+                        <Link
+                          href={`/tasks?view=kanban&clientId=${client.id}`}
+                          title="Abrir quadro Kanban de demandas desta empresa"
+                          className="inline-flex items-center gap-1 font-medium text-black hover:underline"
+                        >
+                          📋 {client.company}
+                        </Link>
+                      ) : (
+                        <Link
+                          href={`/tasks?view=kanban&clientId=${client.id}`}
+                          className="text-xs text-gray-500 hover:underline"
+                        >
+                          Abrir Kanban
+                        </Link>
+                      )}
+                    </TableCell>
                     <TableCell>{client.email ?? "—"}</TableCell>
                     <TableCell>{client.phone ?? "—"}</TableCell>
                     <TableCell>
                       <StatusBadge status={client.status} />
                     </TableCell>
-                    <TableCell>{client.createdAt.toLocaleDateString()}</TableCell>
+                    <TableCell>{client.createdAt.toLocaleDateString("pt-BR")}</TableCell>
                     <TableCell align="right">
-                      <div className="flex items-center justify-end gap-4">
+                      <div className="flex items-center justify-end gap-3">
+                        <Link
+                          href={`/tasks?view=kanban&clientId=${client.id}`}
+                          className="inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 transition-colors hover:bg-black hover:text-white"
+                        >
+                          Kanban
+                        </Link>
                         <Link
                           href={`/clients/${client.id}/edit`}
                           className="inline-flex items-center gap-1 rounded text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                         >
                           <PencilIcon className="h-3.5 w-3.5" />
-                          Edit
+                          Editar
                         </Link>
                         <DeleteButton
                           action={deleteClientAction.bind(null, client.id)}
                           itemName={client.name}
-                          confirmTitle="Delete client"
-                          confirmDescription={`Delete ${client.name}? This action cannot be undone.`}
-                          successMessage="Client deleted"
+                          confirmTitle="Excluir cliente"
+                          confirmDescription={`Excluir ${client.name}? Esta ação não pode ser desfeita.`}
+                          successMessage="Cliente excluído"
                         />
                       </div>
                     </TableCell>
@@ -185,26 +221,53 @@ export default async function ClientsPage({
           <RecordCardList>
             {clients.map((client) => (
               <RecordCard key={client.id}>
-                <RecordCardField label="Name" value={client.name} emphasis />
-                <RecordCardField label="Company" value={client.company ?? "—"} />
-                <RecordCardField label="Email" value={client.email ?? "—"} />
-                <RecordCardField label="Phone" value={client.phone ?? "—"} />
+                <RecordCardField
+                  label="Nome"
+                  value={
+                    <Link
+                      href={`/tasks?view=kanban&clientId=${client.id}`}
+                      className="font-semibold text-black hover:underline"
+                    >
+                      {client.name}
+                    </Link>
+                  }
+                  emphasis
+                />
+                <RecordCardField
+                  label="Empresa"
+                  value={
+                    <Link
+                      href={`/tasks?view=kanban&clientId=${client.id}`}
+                      className="font-medium text-black hover:underline"
+                    >
+                      📋 {client.company ?? "Abrir Kanban"}
+                    </Link>
+                  }
+                />
+                <RecordCardField label="E-mail" value={client.email ?? "—"} />
+                <RecordCardField label="Telefone" value={client.phone ?? "—"} />
                 <RecordCardField label="Status" value={<StatusBadge status={client.status} />} />
-                <RecordCardField label="Created" value={client.createdAt.toLocaleDateString()} />
+                <RecordCardField label="Criado em" value={client.createdAt.toLocaleDateString("pt-BR")} />
                 <RecordCardActions>
+                  <Link
+                    href={`/tasks?view=kanban&clientId=${client.id}`}
+                    className="inline-flex items-center gap-1 rounded bg-black px-2.5 py-1 text-xs font-semibold text-white transition-colors hover:bg-gray-800"
+                  >
+                    Abrir Kanban
+                  </Link>
                   <Link
                     href={`/clients/${client.id}/edit`}
                     className="inline-flex items-center gap-1 rounded text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                   >
                     <PencilIcon className="h-3.5 w-3.5" />
-                    Edit
+                    Editar
                   </Link>
                   <DeleteButton
                     action={deleteClientAction.bind(null, client.id)}
                     itemName={client.name}
-                    confirmTitle="Delete client"
-                    confirmDescription={`Delete ${client.name}? This action cannot be undone.`}
-                    successMessage="Client deleted"
+                    confirmTitle="Excluir cliente"
+                    confirmDescription={`Excluir ${client.name}? Esta ação não pode ser desfeita.`}
+                    successMessage="Cliente excluído"
                   />
                 </RecordCardActions>
               </RecordCard>

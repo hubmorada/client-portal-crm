@@ -6,74 +6,68 @@ import type { NotificationType } from "@/generated/prisma/enums";
 
 const NOTIFICATION_TYPE_LABELS: Record<NotificationType, { title: string; description: string }> = {
   ROLE_CHANGED: {
-    title: "Role changed",
-    description: "When your role in an organization changes.",
+    title: "Cargo alterado",
+    description: "Quando o seu cargo na organização é alterado.",
   },
   OWNERSHIP_TRANSFERRED: {
-    title: "Ownership transferred",
-    description: "When organization ownership is transferred to you.",
+    title: "Propriedade transferida",
+    description: "Quando a propriedade da organização é transferida para você.",
   },
   MEMBER_REMOVED: {
-    title: "Removed from organization",
-    description: "When you're removed from an organization.",
+    title: "Removido da organização",
+    description: "Quando você é removido de uma organização.",
   },
   INVITATION_ACCEPTED: {
-    title: "Invitation accepted",
-    description: "When someone accepts a staff invitation you sent.",
+    title: "Convite de equipe aceito",
+    description: "Quando alguém aceita um convite de equipe enviado por você.",
   },
   PORTAL_INVITATION_ACCEPTED: {
-    title: "Client Portal invitation accepted",
-    description: "When a client accepts a Client Portal invitation you sent.",
+    title: "Convite do Portal aceito",
+    description: "Quando um cliente aceita um convite de acesso ao portal enviado por você.",
   },
   INVOICE_STATUS_CHANGED: {
-    title: "Invoice status changed",
-    description: "When an invoice's status changes (Owners/Admins only).",
+    title: "Status da fatura alterado",
+    description: "Quando o status de uma fatura é alterado (apenas Administradores).",
   },
-  // Comments & Mentions Stage 1/2 (docs/comments-architecture.md): the enum
-  // value exists ahead of the feature (schema-only stage), but this type
-  // stays out of NOTIFICATION_TYPES above until fan-out/UI actually ship in
-  // a later stage — this entry only satisfies the exhaustive Record type
-  // and is never rendered (the settings page iterates NOTIFICATION_TYPES,
-  // not this map's keys).
   MENTIONED: {
-    title: "Mentioned in a comment",
-    description: "When someone @mentions you in a comment.",
+    title: "Mencionado em comentário",
+    description: "Quando alguém menciona você (@) em um comentário.",
   },
   SUBSCRIPTION_ACTIVATED: {
-    title: "Subscription activated",
-    description: "When your organization's subscription becomes active (Owners only).",
+    title: "Assinatura ativada",
+    description: "Quando a assinatura da sua organização fica ativa.",
   },
   PAYMENT_FAILED: {
-    title: "Payment failed",
-    description: "When a billing payment fails (Owners only).",
+    title: "Falha no pagamento",
+    description: "Quando ocorre uma falha no processamento de pagamento.",
   },
   SUBSCRIPTION_CANCELED: {
-    title: "Subscription canceled",
-    description: "When your organization's subscription is canceled (Owners only).",
+    title: "Assinatura cancelada",
+    description: "Quando a assinatura da sua organização é cancelada.",
   },
   PLAN_CHANGED: {
-    title: "Plan changed",
-    description: "When your organization's billing plan changes (Owners only).",
+    title: "Plano alterado",
+    description: "Quando o plano de assinatura da organização é modificado.",
   },
   TASK_CREATED: {
-    title: "Demand created",
-    description: "When a new demand/task is created.",
+    title: "Nova demanda criada",
+    description: "Quando uma nova demanda é aberta.",
   },
   TASK_STATUS_CHANGED: {
-    title: "Demand status changed",
-    description: "When a demand/task status changes.",
+    title: "Status da demanda alterado",
+    description: "Quando o status de uma demanda muda no fluxo.",
   },
   TASK_ASSIGNEE_CHANGED: {
-    title: "Demand assignee changed",
-    description: "When a demand/task is assigned to a member.",
+    title: "Responsável pela demanda alterado",
+    description: "Quando uma demanda é atribuída a um membro da equipe.",
   },
   TASK_DUE_DATE_CHANGED: {
-    title: "Demand due date changed",
-    description: "When a demand/task's due date is updated.",
+    title: "Prazo da demanda alterado",
+    description: "Quando a data de entrega de uma demanda é atualizada.",
   },
   TASK_COMPLETED: {
-    title: "Demand completed",
-    description: "When a demand/task is marked as completed.",
+    title: "Demanda concluída",
+    description: "Quando uma demanda é marcada como finalizada.",
   },
 };
 
@@ -83,9 +77,9 @@ export default async function NotificationPreferencesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Notification preferences</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Preferências de notificação</h1>
       <p className="mt-1 text-sm text-gray-600">
-        Choose what you get notified about, and whether that also reaches your email.
+        Escolha sobre o que você deseja ser notificado e se também quer receber por e-mail.
       </p>
 
       <div className="mt-6 flex justify-end">
@@ -97,13 +91,13 @@ export default async function NotificationPreferencesPage() {
           <thead className="border-b border-gray-200 bg-gray-50 text-xs font-medium text-gray-500 uppercase">
             <tr>
               <th scope="col" className="px-4 py-3">
-                Notification type
+                Tipo de notificação
               </th>
               <th scope="col" className="px-4 py-3 text-center">
-                In-app
+                No Sistema
               </th>
               <th scope="col" className="px-4 py-3 text-center">
-                Email
+                Por E-mail
               </th>
             </tr>
           </thead>

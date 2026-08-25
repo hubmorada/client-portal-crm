@@ -7,7 +7,6 @@ const LINKS = [
   { href: "/portal", label: "Visão Geral" },
   { href: "/portal/projects", label: "Projetos" },
   { href: "/portal/tasks", label: "Demandas" },
-  { href: "/portal/invoices", label: "Faturas" },
   { href: "/portal/profile", label: "Perfil" },
 ];
 

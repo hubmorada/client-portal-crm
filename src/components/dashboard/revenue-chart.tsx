@@ -8,8 +8,8 @@ function formatBucketLabel(bucketStart: string, unit: DashboardBucketUnit): stri
   const iso = unit === "month" ? `${bucketStart}-01T00:00:00Z` : `${bucketStart}T00:00:00Z`;
   const date = new Date(iso);
   return unit === "month"
-    ? date.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" })
-    : date.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+    ? date.toLocaleDateString("pt-BR", { month: "short", timeZone: "UTC" })
+    : date.toLocaleDateString("pt-BR", { month: "short", day: "numeric", timeZone: "UTC" });
 }
 
 /**
@@ -38,7 +38,7 @@ export function RevenueChart({
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <h3 className="text-sm font-semibold text-gray-900">Revenue over time</h3>
+        <h3 className="text-sm font-semibold text-gray-900">Receita ao longo do tempo</h3>
         <p className="text-xs text-gray-500">{formatDashboardPeriodLabel(period)}</p>
       </div>
       <p className="mt-1 text-2xl font-semibold tracking-tight text-gray-900">
@@ -46,7 +46,7 @@ export function RevenueChart({
       </p>
 
       {isEmpty ? (
-        <p className="mt-6 text-sm text-gray-500">No paid invoices in this period.</p>
+        <p className="mt-6 text-sm text-gray-500">Nenhum faturamento registrado neste período.</p>
       ) : (
         <div
           role="img"

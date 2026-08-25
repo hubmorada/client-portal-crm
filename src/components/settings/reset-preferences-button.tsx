@@ -12,9 +12,9 @@ export function ResetPreferencesButton() {
     startTransition(async () => {
       try {
         await resetNotificationPreferencesAction();
-        showToast("Notification preferences reset to defaults.");
+        showToast("Preferências de notificação redefinidas para o padrão.");
       } catch {
-        showToast("Failed to reset preferences.", "error");
+        showToast("Falha ao redefinir preferências.", "error");
       }
     });
   }
@@ -26,7 +26,7 @@ export function ResetPreferencesButton() {
       onClick={handleClick}
       className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
     >
-      Reset to defaults
+      Restaurar padrões
     </button>
   );
 }

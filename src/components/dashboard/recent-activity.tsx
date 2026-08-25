@@ -12,17 +12,17 @@ export function RecentActivity({ items }: { items: { id: string; display: Activi
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-900">Recent activity</h3>
+        <h3 className="text-sm font-semibold text-gray-900">Atividades recentes</h3>
         <Link
           href="/activity"
           className="rounded text-sm text-gray-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
         >
-          View all activity
+          Ver todas as atividades
         </Link>
       </div>
 
       {items.length === 0 ? (
-        <p className="mt-4 text-sm text-gray-500">No activity yet.</p>
+        <p className="mt-4 text-sm text-gray-500">Nenhuma atividade recente.</p>
       ) : (
         <ul className="mt-4 divide-y divide-gray-100">
           {items.map((item) => (
@@ -32,7 +32,7 @@ export function RecentActivity({ items }: { items: { id: string; display: Activi
                   <span className="font-medium">{item.display.actorLabel}</span> {item.display.actionLabel}
                   {item.display.isDeleted && (
                     <span className="ml-2 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">
-                      Deleted
+                      Excluído
                     </span>
                   )}
                 </p>
@@ -40,7 +40,7 @@ export function RecentActivity({ items }: { items: { id: string; display: Activi
                   dateTime={item.display.timestamp.toISOString()}
                   className="shrink-0 text-xs text-gray-400"
                 >
-                  {item.display.timestamp.toLocaleDateString(undefined, {
+                  {item.display.timestamp.toLocaleDateString("pt-BR", {
                     month: "short",
                     day: "numeric",
                   })}
