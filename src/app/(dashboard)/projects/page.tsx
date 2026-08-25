@@ -32,10 +32,10 @@ import {
 } from "./query";
 
 const SORT_OPTIONS = [
-  { value: "createdAt:desc", label: "Newest first" },
-  { value: "createdAt:asc", label: "Oldest first" },
-  { value: "name:asc", label: "Name (A–Z)" },
-  { value: "name:desc", label: "Name (Z–A)" },
+  { value: "createdAt:desc", label: "Mais recentes" },
+  { value: "createdAt:asc", label: "Mais antigos" },
+  { value: "name:asc", label: "Nome (A–Z)" },
+  { value: "name:desc", label: "Nome (Z–A)" },
 ];
 
 export default async function ProjectsPage({
@@ -72,10 +72,10 @@ export default async function ProjectsPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
-            Projects
+            Projetos
           </h1>
           <p className="mt-1 text-sm text-gray-600">
-            {total} {total === 1 ? "project" : "projects"}
+            {total} {total === 1 ? "projeto" : "projetos"}
           </p>
         </div>
         {clientCount > 0 && (
@@ -83,7 +83,7 @@ export default async function ProjectsPage({
             href="/projects/new"
             className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
           >
-            Add project
+            Novo projeto
           </Link>
         )}
       </div>
@@ -92,14 +92,14 @@ export default async function ProjectsPage({
         <SearchFilterBar
           basePath="/projects"
           searchValue={listParams.q}
-          searchPlaceholder="Search by name or client"
+          searchPlaceholder="Buscar por nome ou cliente"
           filters={[
             {
               name: "status",
               label: "Status",
               value: listParams.status ?? "",
               options: [
-                { value: "", label: "All statuses" },
+                { value: "", label: "Todos os status" },
                 ...PROJECT_STATUSES.map((status) => ({
                   value: status,
                   label: formatStatusLabel(status),
@@ -115,40 +115,40 @@ export default async function ProjectsPage({
       {total === 0 ? (
         clientCount === 0 ? (
           <EmptyState
-            title="You need a client first"
-            description="Projects must belong to a client. Add one before creating a project."
+            title="Você precisa de um cliente primeiro"
+            description="Projetos são vinculados a clientes. Adicione seu primeiro cliente antes de criar projetos."
             action={
               <Link
                 href="/clients/new"
                 className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
               >
-                Add client
+                Cadastrar cliente
               </Link>
             }
           />
         ) : hasActiveParams ? (
           <EmptyState
-            title="No matching projects"
-            description="Try a different search term or clear your filters."
+            title="Nenhum projeto encontrado"
+            description="Tente um termo de busca diferente ou limpe seus filtros."
             action={
               <Link
                 href="/projects"
                 className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
               >
-                Clear filters
+                Limpar filtros
               </Link>
             }
           />
         ) : (
           <EmptyState
-            title="No projects yet"
-            description="Projects organize your work for a client — group related tasks together and track progress from start to finish."
+            title="Nenhum projeto cadastrado"
+            description="Projetos organizam as entregas do seu cliente em um fluxo estruturado de demandas."
             action={
               <Link
                 href="/projects/new"
                 className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
               >
-                Create your first project
+                Criar primeiro projeto
               </Link>
             }
           />
@@ -159,13 +159,13 @@ export default async function ProjectsPage({
             <Table>
               <TableHead>
                 <tr>
-                  <TableHeaderCell>Name</TableHeaderCell>
-                  <TableHeaderCell>Client</TableHeaderCell>
+                  <TableHeaderCell>Nome</TableHeaderCell>
+                  <TableHeaderCell>Cliente</TableHeaderCell>
                   <TableHeaderCell>Status</TableHeaderCell>
-                  <TableHeaderCell>Start date</TableHeaderCell>
-                  <TableHeaderCell>End date</TableHeaderCell>
-                  <TableHeaderCell>Created</TableHeaderCell>
-                  <TableHeaderCell align="right">Actions</TableHeaderCell>
+                  <TableHeaderCell>Data de início</TableHeaderCell>
+                  <TableHeaderCell>Data de término</TableHeaderCell>
+                  <TableHeaderCell>Criado em</TableHeaderCell>
+                  <TableHeaderCell align="right">Ações</TableHeaderCell>
                 </tr>
               </TableHead>
               <TableBody>
@@ -178,15 +178,15 @@ export default async function ProjectsPage({
                     </TableCell>
                     <TableCell>
                       {project.startDate
-                        ? project.startDate.toLocaleDateString()
+                        ? project.startDate.toLocaleDateString("pt-BR")
                         : "—"}
                     </TableCell>
                     <TableCell>
                       {project.endDate
-                        ? project.endDate.toLocaleDateString()
+                        ? project.endDate.toLocaleDateString("pt-BR")
                         : "—"}
                     </TableCell>
-                    <TableCell>{project.createdAt.toLocaleDateString()}</TableCell>
+                    <TableCell>{project.createdAt.toLocaleDateString("pt-BR")}</TableCell>
                     <TableCell align="right">
                       <div className="flex items-center justify-end gap-4">
                         <Link
@@ -194,14 +194,14 @@ export default async function ProjectsPage({
                           className="inline-flex items-center gap-1 rounded text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                         >
                           <PencilIcon className="h-3.5 w-3.5" />
-                          Edit
+                          Editar
                         </Link>
                         <DeleteButton
                           action={deleteProjectAction.bind(null, project.id)}
                           itemName={project.name}
-                          confirmTitle="Delete project"
-                          confirmDescription={`Delete ${project.name}? This action cannot be undone.`}
-                          successMessage="Project deleted"
+                          confirmTitle="Excluir projeto"
+                          confirmDescription={`Excluir ${project.name}? Esta ação não pode ser desfeita.`}
+                          successMessage="Projeto excluído"
                         />
                       </div>
                     </TableCell>
@@ -214,32 +214,32 @@ export default async function ProjectsPage({
           <RecordCardList>
             {projects.map((project) => (
               <RecordCard key={project.id}>
-                <RecordCardField label="Name" value={project.name} emphasis />
-                <RecordCardField label="Client" value={project.client.name} />
+                <RecordCardField label="Nome" value={project.name} emphasis />
+                <RecordCardField label="Cliente" value={project.client.name} />
                 <RecordCardField label="Status" value={<StatusBadge status={project.status} />} />
                 <RecordCardField
-                  label="Start date"
-                  value={project.startDate ? project.startDate.toLocaleDateString() : "—"}
+                  label="Data de início"
+                  value={project.startDate ? project.startDate.toLocaleDateString("pt-BR") : "—"}
                 />
                 <RecordCardField
-                  label="End date"
-                  value={project.endDate ? project.endDate.toLocaleDateString() : "—"}
+                  label="Data de término"
+                  value={project.endDate ? project.endDate.toLocaleDateString("pt-BR") : "—"}
                 />
-                <RecordCardField label="Created" value={project.createdAt.toLocaleDateString()} />
+                <RecordCardField label="Criado em" value={project.createdAt.toLocaleDateString("pt-BR")} />
                 <RecordCardActions>
                   <Link
                     href={`/projects/${project.id}/edit`}
                     className="inline-flex items-center gap-1 rounded text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                   >
                     <PencilIcon className="h-3.5 w-3.5" />
-                    Edit
+                    Editar
                   </Link>
                   <DeleteButton
                     action={deleteProjectAction.bind(null, project.id)}
                     itemName={project.name}
-                    confirmTitle="Delete project"
-                    confirmDescription={`Delete ${project.name}? This action cannot be undone.`}
-                    successMessage="Project deleted"
+                    confirmTitle="Excluir projeto"
+                    confirmDescription={`Excluir ${project.name}? Esta ação não pode ser desfeita.`}
+                    successMessage="Projeto excluído"
                   />
                 </RecordCardActions>
               </RecordCard>

@@ -11,29 +11,6 @@ import type { CompanyProfileData } from "@/lib/organization-setup/company-profil
 
 const initialState: CompanyProfileFormState = { error: null };
 
-/**
- * Sale-Ready Phase A.1 (Business Identity), PR3. Same form, same
- * `updateCompanyProfileAction`, same `useActionState` pattern, same
- * validation/error-display contract as before this stage — every field
- * that existed here already (legalName/displayName/country/currency/
- * timezone) keeps its exact `name`, `required`-ness, and error key.
- * What's new is purely organizational: the previously flat field list is
- * now grouped into `<fieldset>`/`<legend>` sections so the page reads as
- * "configure your business," not a list of unrelated settings —
- * `<fieldset>` is the correct native grouping for related inputs *within
- * one form* (as opposed to the separate `<section>` elements
- * settings/billing already uses to group unrelated cards on one page).
- *
- * currency/timezone don't belong to any of this stage's five named
- * Business Identity sections (they're locale/operational settings, not
- * identity) — kept in Business, right where they already sat, rather
- * than inventing a sixth, unrequested section for two fields.
- *
- * Every new field is optional (no `required` attribute, matching
- * validation/company-profile.ts's own nullable contract) — an OWNER can
- * save with none of them filled in, exactly as they always could before
- * this stage existed.
- */
 export function CompanyProfileForm({
   profile,
   currencies,
@@ -48,9 +25,9 @@ export function CompanyProfileForm({
   return (
     <form action={formAction} className="mt-6 space-y-8 rounded-lg border border-gray-200 bg-white p-6">
       <fieldset className="space-y-4">
-        <legend className="text-base font-semibold text-gray-900">Business</legend>
+        <legend className="text-base font-semibold text-gray-900">Dados da Empresa</legend>
 
-        <FormField label="Display / company name" htmlFor="displayName" required error={state.fieldErrors?.displayName}>
+        <FormField label="Nome fantasia / Marca" htmlFor="displayName" required error={state.fieldErrors?.displayName}>
           <Input
             id="displayName"
             name="displayName"
@@ -61,7 +38,7 @@ export function CompanyProfileForm({
           />
         </FormField>
 
-        <FormField label="Legal company name" htmlFor="legalName" required error={state.fieldErrors?.legalName}>
+        <FormField label="Razão social" htmlFor="legalName" required error={state.fieldErrors?.legalName}>
           <Input
             id="legalName"
             name="legalName"
@@ -72,16 +49,16 @@ export function CompanyProfileForm({
           />
         </FormField>
 
-        <FormField label="Currency" htmlFor="currency" required error={state.fieldErrors?.currency}>
+        <FormField label="Moeda principal" htmlFor="currency" required error={state.fieldErrors?.currency}>
           <Select
             id="currency"
             name="currency"
-            defaultValue={profile.currency ?? ""}
+            defaultValue={profile.currency ?? "BRL"}
             aria-invalid={!!state.fieldErrors?.currency}
             required
           >
             <option value="" disabled>
-              Select a currency
+              Selecione uma moeda
             </option>
             {currencies.map((code) => (
               <option key={code} value={code}>
@@ -91,16 +68,16 @@ export function CompanyProfileForm({
           </Select>
         </FormField>
 
-        <FormField label="Time zone" htmlFor="timezone" required error={state.fieldErrors?.timezone}>
+        <FormField label="Fuso horário" htmlFor="timezone" required error={state.fieldErrors?.timezone}>
           <Select
             id="timezone"
             name="timezone"
-            defaultValue={profile.timezone ?? ""}
+            defaultValue={profile.timezone ?? "America/Sao_Paulo"}
             aria-invalid={!!state.fieldErrors?.timezone}
             required
           >
             <option value="" disabled>
-              Select a time zone
+              Selecione um fuso horário
             </option>
             {timezones.map((tz) => (
               <option key={tz} value={tz}>
@@ -112,27 +89,19 @@ export function CompanyProfileForm({
       </fieldset>
 
       <fieldset className="space-y-4">
-        <legend className="text-base font-semibold text-gray-900">Contact</legend>
+        <legend className="text-base font-semibold text-gray-900">Contato &amp; Atendimento</legend>
 
-        <FormField label="Support email" htmlFor="supportEmail" error={state.fieldErrors?.supportEmail}>
+        <FormField label="E-mail de suporte / atendimento" htmlFor="supportEmail" error={state.fieldErrors?.supportEmail}>
           <Input
             id="supportEmail"
             name="supportEmail"
-            // Deliberately type="text", not type="email": a browser's own
-            // native format validation would block submission before this
-            // form's server-side validation ever runs, so a genuinely
-            // invalid value would never reach parseCompanyProfileForm and
-            // its own fieldError message would never have a chance to
-            // display — the exact same reasoning as brandColor above,
-            // and consistent with every other validated-but-optional
-            // field on this form already being type="text".
             type="text"
             defaultValue={profile.supportEmail ?? ""}
             aria-invalid={!!state.fieldErrors?.supportEmail}
           />
         </FormField>
 
-        <FormField label="Website" htmlFor="website" error={state.fieldErrors?.website}>
+        <FormField label="Site oficial" htmlFor="website" error={state.fieldErrors?.website}>
           <Input
             id="website"
             name="website"
@@ -143,7 +112,7 @@ export function CompanyProfileForm({
           />
         </FormField>
 
-        <FormField label="Phone" htmlFor="phone" error={state.fieldErrors?.phone}>
+        <FormField label="Telefone / WhatsApp" htmlFor="phone" error={state.fieldErrors?.phone}>
           <Input
             id="phone"
             name="phone"
@@ -155,20 +124,20 @@ export function CompanyProfileForm({
       </fieldset>
 
       <fieldset className="space-y-4">
-        <legend className="text-base font-semibold text-gray-900">Address</legend>
+        <legend className="text-base font-semibold text-gray-900">Endereço</legend>
 
-        <FormField label="Country" htmlFor="country" required error={state.fieldErrors?.country}>
+        <FormField label="País" htmlFor="country" required error={state.fieldErrors?.country}>
           <Input
             id="country"
             name="country"
             type="text"
-            defaultValue={profile.country ?? ""}
+            defaultValue={profile.country ?? "Brasil"}
             aria-invalid={!!state.fieldErrors?.country}
             required
           />
         </FormField>
 
-        <FormField label="Street address" htmlFor="streetAddress" error={state.fieldErrors?.streetAddress}>
+        <FormField label="Logradouro e número" htmlFor="streetAddress" error={state.fieldErrors?.streetAddress}>
           <Input
             id="streetAddress"
             name="streetAddress"
@@ -178,7 +147,7 @@ export function CompanyProfileForm({
           />
         </FormField>
 
-        <FormField label="City" htmlFor="city" error={state.fieldErrors?.city}>
+        <FormField label="Cidade" htmlFor="city" error={state.fieldErrors?.city}>
           <Input
             id="city"
             name="city"
@@ -188,7 +157,7 @@ export function CompanyProfileForm({
           />
         </FormField>
 
-        <FormField label="State / Province" htmlFor="state" error={state.fieldErrors?.state}>
+        <FormField label="Estado (UF)" htmlFor="state" error={state.fieldErrors?.state}>
           <Input
             id="state"
             name="state"
@@ -198,7 +167,7 @@ export function CompanyProfileForm({
           />
         </FormField>
 
-        <FormField label="Postal code" htmlFor="postalCode" error={state.fieldErrors?.postalCode}>
+        <FormField label="CEP" htmlFor="postalCode" error={state.fieldErrors?.postalCode}>
           <Input
             id="postalCode"
             name="postalCode"
@@ -210,9 +179,9 @@ export function CompanyProfileForm({
       </fieldset>
 
       <fieldset className="space-y-4">
-        <legend className="text-base font-semibold text-gray-900">Tax</legend>
+        <legend className="text-base font-semibold text-gray-900">Dados Fiscais</legend>
 
-        <FormField label="Tax ID / VAT" htmlFor="taxId" error={state.fieldErrors?.taxId}>
+        <FormField label="CNPJ / CPF" htmlFor="taxId" error={state.fieldErrors?.taxId}>
           <Input
             id="taxId"
             name="taxId"
@@ -224,23 +193,14 @@ export function CompanyProfileForm({
       </fieldset>
 
       <fieldset className="space-y-4">
-        <legend className="text-base font-semibold text-gray-900">Branding</legend>
+        <legend className="text-base font-semibold text-gray-900">Identidade Visual</legend>
 
-        {/*
-          Deliberately type="text", not type="color": a native color
-          input has no "empty" state — it always submits a real hex
-          value (defaulting to black), which would silently overwrite
-          this nullable field with #000000 on every unrelated save for
-          an organization that never set one. A plain text field keeps
-          "unset" genuinely empty, the same as every other optional field
-          on this form.
-        */}
-        <FormField label="Brand color" htmlFor="brandColor" error={state.fieldErrors?.brandColor}>
+        <FormField label="Cor principal da marca" htmlFor="brandColor" error={state.fieldErrors?.brandColor}>
           <Input
             id="brandColor"
             name="brandColor"
             type="text"
-            placeholder="#RRGGBB"
+            placeholder="#000000"
             defaultValue={profile.brandColor ?? ""}
             aria-invalid={!!state.fieldErrors?.brandColor}
           />
@@ -259,7 +219,7 @@ export function CompanyProfileForm({
       )}
 
       <Button type="submit" loading={pending}>
-        {pending ? "Saving…" : "Save company profile"}
+        {pending ? "Salvando…" : "Salvar dados da empresa"}
       </Button>
     </form>
   );

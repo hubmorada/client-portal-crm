@@ -25,7 +25,7 @@ export function InviteForm({
   return (
     <form action={formAction} className="space-y-4">
       <FormField
-        label="Email"
+        label="E-mail"
         htmlFor="email"
         required
         error={state.fieldErrors?.email}
@@ -34,13 +34,14 @@ export function InviteForm({
           id="email"
           name="email"
           type="email"
+          placeholder="colaborador@empresa.com"
           required
           aria-invalid={!!state.fieldErrors?.email}
           aria-describedby={state.fieldErrors?.email ? "email-error" : undefined}
         />
       </FormField>
 
-      <FormField label="Role" htmlFor="role" required error={state.fieldErrors?.role}>
+      <FormField label="Função" htmlFor="role" required error={state.fieldErrors?.role}>
         <Select
           id="role"
           name="role"
@@ -76,7 +77,7 @@ export function InviteForm({
               state.emailFailed ? "text-amber-800" : "text-green-800"
             }`}
           >
-            {state.message ?? "Invitation created."}
+            {state.message ?? "Convite gerado com sucesso."}
           </p>
           <div className="mt-2">
             <CopyLinkButton token={state.token} />
@@ -86,7 +87,7 @@ export function InviteForm({
 
       <div className="flex gap-3 pt-2">
         <Button type="submit" loading={pending}>
-          {pending ? "Sending invitation…" : "Send invite"}
+          {pending ? "Enviando convite…" : "Enviar convite"}
         </Button>
       </div>
     </form>

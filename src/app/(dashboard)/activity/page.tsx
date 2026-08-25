@@ -62,7 +62,7 @@ export default async function ActivityPage({
 
   const groups: { label: string; items: typeof items }[] = [];
   for (const item of items) {
-    const label = item.display.timestamp.toLocaleDateString(undefined, {
+    const label = item.display.timestamp.toLocaleDateString("pt-BR", {
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -94,13 +94,12 @@ export default async function ActivityPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Activity</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Histórico de Atividades</h1>
       <p className="mt-1 text-sm text-gray-600">
-        A record of changes across your organization.
+        Registro completo de todas as alterações e ações na sua organização.
       </p>
       <p className="mt-1 text-xs text-gray-500">
-        Activity is recorded from the moment this feature was enabled. Earlier changes are
-        not available.
+        As atividades são registradas em tempo real a cada ação da equipe.
       </p>
 
       <ActivityFilterBar
@@ -115,17 +114,17 @@ export default async function ActivityPage({
 
       {listParams.cursorInvalid && (
         <p role="alert" className="mt-4 text-sm text-amber-700">
-          Your previous page link expired — showing the latest activity instead.
+          O link da página expirou — exibindo as atividades mais recentes.
         </p>
       )}
 
       {items.length === 0 ? (
         <EmptyState
-          title={hasActiveFilters ? "No matching activity" : "No activity yet"}
+          title={hasActiveFilters ? "Nenhuma atividade encontrada" : "Nenhuma atividade recente"}
           description={
             hasActiveFilters
-              ? "Try different filters or clear them to see everything."
-              : "Actions your team takes will show up here."
+              ? "Tente filtros diferentes ou limpe os filtros para ver tudo."
+              : "As ações realizadas pela sua equipe aparecerão aqui em tempo real."
           }
           action={
             hasActiveFilters ? (
@@ -133,7 +132,7 @@ export default async function ActivityPage({
                 href="/activity"
                 className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
               >
-                Clear filters
+                Limpar filtros
               </Link>
             ) : undefined
           }
@@ -142,7 +141,7 @@ export default async function ActivityPage({
         <div className="mt-6 space-y-8">
           {groups.map((group) => (
             <section key={group.label}>
-              <h2 className="text-sm font-semibold text-gray-500">{group.label}</h2>
+              <h2 className="text-sm font-semibold capitalize text-gray-500">{group.label}</h2>
               <ul className="mt-2 divide-y divide-gray-100 rounded-lg border border-gray-200 bg-white">
                 {group.items.map((item) => (
                   <li key={item.id} className="p-4">
@@ -152,7 +151,7 @@ export default async function ActivityPage({
                         {item.display.actionLabel}
                         {item.display.isDeleted && (
                           <span className="ml-2 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">
-                            Deleted
+                            Excluído
                           </span>
                         )}
                       </p>
@@ -160,7 +159,7 @@ export default async function ActivityPage({
                         dateTime={item.display.timestamp.toISOString()}
                         className="shrink-0 text-xs text-gray-400"
                       >
-                        {item.display.timestamp.toLocaleTimeString(undefined, {
+                        {item.display.timestamp.toLocaleTimeString("pt-BR", {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}

@@ -19,40 +19,31 @@ export type ActivityFormatInput = {
   createdAt: Date;
 };
 
-// Only known-safe field names ever get a human label — anything else
-// (there shouldn't be anything else, but metadata is never trusted blindly)
-// falls back to its raw name rather than being dropped.
 const FIELD_LABELS: Record<string, string> = {
-  name: "name",
-  email: "email",
-  phone: "phone",
-  company: "company",
+  name: "nome",
+  email: "e-mail",
+  phone: "telefone",
+  company: "empresa",
   status: "status",
-  clientId: "client",
-  projectId: "project",
-  startDate: "start date",
-  endDate: "end date",
-  dueDate: "due date",
-  title: "title",
-  priority: "priority",
-  invoiceNumber: "invoice number",
-  amount: "amount",
-  // Invoice System Slice 2b — labels only, never values (see
-  // buildInvoiceUpdatedMetadata's own names-only contract).
-  currency: "currency",
-  issueDate: "issue date",
-  notes: "notes",
-  internalNotes: "internal notes",
-  discountType: "discount type",
-  discountValue: "discount",
-  taxRatePercent: "tax rate",
-  taxLabel: "tax label",
-  lineItems: "line items",
-  // Invoice System Official Slice 3, Legacy Archive — a single logical
-  // marker, never a real persisted Invoice column name (see
-  // buildInvoiceUpdatedMetadata's own names-only contract). Represents the
-  // whole retroactive-archival event as one readable Timeline phrase.
-  legacyArchive: "legacy PDF archive",
+  clientId: "cliente",
+  projectId: "projeto",
+  startDate: "data de início",
+  endDate: "data de término",
+  dueDate: "prazo",
+  title: "título",
+  priority: "prioridade",
+  invoiceNumber: "número da fatura",
+  amount: "valor",
+  currency: "moeda",
+  issueDate: "data de emissão",
+  notes: "observações",
+  internalNotes: "notas internas",
+  discountType: "tipo de desconto",
+  discountValue: "desconto",
+  taxRatePercent: "impostos",
+  taxLabel: "rótulo fiscal",
+  lineItems: "itens",
+  legacyArchive: "arquivo PDF legado",
 };
 
 function humanizeFieldName(field: string): string {
@@ -81,7 +72,7 @@ function numeric(value: unknown): number | null {
 type PartialModel = Pick<ActivityDisplayModel, "actionLabel" | "entityLabel" | "detailLines">;
 
 const FALLBACK: PartialModel = {
-  actionLabel: "Activity recorded",
+  actionLabel: "Atividade registrada",
   entityLabel: null,
   detailLines: [],
 };
@@ -98,13 +89,13 @@ function isDataEntity(entityType: ActivityEntityType): boolean {
 function entityNoun(entityType: ActivityEntityType): string {
   switch (entityType) {
     case "CLIENT":
-      return "client";
+      return "o cliente";
     case "PROJECT":
-      return "project";
+      return "o projeto";
     case "TASK":
-      return "task";
+      return "a demanda";
     case "INVOICE":
-      return "invoice";
+      return "a fatura";
     default:
       return "";
   }
@@ -126,11 +117,11 @@ function buildDataEntityModel(
   if (!name) return FALLBACK;
 
   if (action === "CREATED" || action === "DELETED") {
-    const verb = action === "CREATED" ? "created" : "deleted";
+    const verb = action === "CREATED" ? "criou" : "excluiu";
     const detailLines: string[] = [];
     if (entityType === "INVOICE") {
       const amount = numeric(metadata.amount);
-      const currency = str(metadata.currency) ?? "USD";
+      const currency = str(metadata.currency) ?? "BRL";
       if (amount !== null) detailLines.push(formatCurrency(amount, currency));
     }
     return { actionLabel: `${verb} ${noun} ${name}`, entityLabel: name, detailLines };
@@ -140,13 +131,9 @@ function buildDataEntityModel(
     const from = str(metadata.from);
     const to = str(metadata.to);
     if (!from || !to) return FALLBACK;
-    // INVOICE's SENT enum value renders as "Issued" everywhere in the
-    // staff UI (docs/invoicing-architecture.md §3.1) — scoped to this one
-    // entityType so CLIENT/PROJECT/TASK STATUS_CHANGED events (which share
-    // this same code path) are unaffected.
     const label = entityType === "INVOICE" ? formatInvoiceStatusLabel : formatStatusLabel;
     return {
-      actionLabel: `changed ${noun} ${name} status`,
+      actionLabel: `alterou o status d${noun === "a demanda" ? "a demanda" : noun === "a fatura" ? "a fatura" : "o item"} ${name}`,
       entityLabel: name,
       detailLines: [`${label(from)} → ${label(to)}`],
     };
@@ -156,9 +143,9 @@ function buildDataEntityModel(
     const changedFields = strList(metadata.changedFields);
     const detailLines =
       changedFields.length > 0
-        ? [`Changed: ${changedFields.map(humanizeFieldName).join(", ")}`]
+        ? [`Campos alterados: ${changedFields.map(humanizeFieldName).join(", ")}`]
         : [];
-    return { actionLabel: `updated ${noun} ${name}`, entityLabel: name, detailLines };
+    return { actionLabel: `atualizou ${noun} ${name}`, entityLabel: name, detailLines };
   }
 
   return FALLBACK;
@@ -175,22 +162,22 @@ function buildInvitationModel(
 
   switch (action) {
     case "INVITATION_SENT":
-      return { actionLabel: `invited ${email} as ${roleLabel}`, entityLabel: email, detailLines: [] };
+      return { actionLabel: `convidou ${email} como ${roleLabel}`, entityLabel: email, detailLines: [] };
     case "INVITATION_RESENT":
       return {
-        actionLabel: `resent an invitation to ${email}`,
+        actionLabel: `reenviou o convite para ${email}`,
         entityLabel: email,
         detailLines: [],
       };
     case "INVITATION_CANCELED":
       return {
-        actionLabel: `canceled the invitation for ${email}`,
+        actionLabel: `cancelou o convite de ${email}`,
         entityLabel: email,
         detailLines: [],
       };
     case "INVITATION_ACCEPTED":
       return {
-        actionLabel: `accepted an invitation as ${roleLabel}`,
+        actionLabel: `aceitou o convite como ${roleLabel}`,
         entityLabel: email,
         detailLines: [],
       };
@@ -209,7 +196,7 @@ function buildMembershipModel(
     const to = str(metadata.to);
     if (!memberName || !from || !to) return FALLBACK;
     return {
-      actionLabel: `changed ${memberName}'s role`,
+      actionLabel: `alterou o cargo de ${memberName}`,
       entityLabel: memberName,
       detailLines: [`${formatStatusLabel(from)} → ${formatStatusLabel(to)}`],
     };
@@ -220,7 +207,7 @@ function buildMembershipModel(
     const newOwnerName = str(metadata.newOwnerName);
     if (!previousOwnerName || !newOwnerName) return FALLBACK;
     return {
-      actionLabel: "transferred ownership",
+      actionLabel: "transferiu a propriedade da organização",
       entityLabel: newOwnerName,
       detailLines: [`${previousOwnerName} → ${newOwnerName}`],
     };
@@ -230,35 +217,25 @@ function buildMembershipModel(
     const memberName = str(metadata.memberName);
     if (!memberName) return FALLBACK;
     return {
-      actionLabel: `removed ${memberName} from the organization`,
+      actionLabel: `removeu ${memberName} da organização`,
       entityLabel: memberName,
       detailLines: [],
     };
   }
 
   if (action === "MEMBER_LEFT") {
-    // Self-referential — actorLabel already names this same person.
-    return { actionLabel: "left the organization", entityLabel: str(metadata.memberName), detailLines: [] };
+    return { actionLabel: "saiu da organização", entityLabel: str(metadata.memberName), detailLines: [] };
   }
 
   return FALLBACK;
 }
 
-// The only parent entity types Attachment metadata is ever written for
-// (see AttachmentEntityType) — anything else in parentEntityType is
-// treated as malformed metadata, not rendered.
 const ATTACHMENT_PARENT_NOUNS: Record<string, string> = {
-  CLIENT: "client",
-  PROJECT: "project",
-  INVOICE: "invoice",
+  CLIENT: "cliente",
+  PROJECT: "projeto",
+  INVOICE: "fatura",
 };
 
-/**
- * FILE_UPLOADED / FILE_DELETED — metadata is always
- * { fileName, parentEntityType, parentEntityLabel, actorName }, never a
- * storagePath, signed URL, mime type, or a link to the Attachment/parent
- * (this formatter never renders one, matching every other case above).
- */
 function buildAttachmentModel(
   action: ActivityAction,
   metadata: Record<string, unknown>,
@@ -270,7 +247,7 @@ function buildAttachmentModel(
 
   if (action === "FILE_UPLOADED") {
     return {
-      actionLabel: `uploaded ${fileName} to ${parentNoun} ${parentEntityLabel}`,
+      actionLabel: `anexou o arquivo ${fileName} no ${parentNoun} ${parentEntityLabel}`,
       entityLabel: fileName,
       detailLines: [],
     };
@@ -278,7 +255,7 @@ function buildAttachmentModel(
 
   if (action === "FILE_DELETED") {
     return {
-      actionLabel: `deleted ${fileName} from ${parentNoun} ${parentEntityLabel}`,
+      actionLabel: `removeu o arquivo ${fileName} do ${parentNoun} ${parentEntityLabel}`,
       entityLabel: fileName,
       detailLines: [],
     };
@@ -287,12 +264,6 @@ function buildAttachmentModel(
   return FALLBACK;
 }
 
-/**
- * PORTAL_USER covers both the ClientInvitation lifecycle (SENT/RESENT/
- * CANCELED/ACCEPTED) and PortalUser removal — metadata is always
- * { email | portalUserName, clientName, actorName }, never a token, URL,
- * or the PortalUser/ClientInvitation id itself.
- */
 function buildPortalUserModel(
   action: ActivityAction,
   metadata: Record<string, unknown>,
@@ -305,7 +276,7 @@ function buildPortalUserModel(
       const email = str(metadata.email);
       if (!email) return FALLBACK;
       return {
-        actionLabel: `invited ${email} to client portal for ${clientName}`,
+        actionLabel: `convidou ${email} para o Portal do Cliente de ${clientName}`,
         entityLabel: email,
         detailLines: [],
       };
@@ -314,7 +285,7 @@ function buildPortalUserModel(
       const email = str(metadata.email);
       if (!email) return FALLBACK;
       return {
-        actionLabel: `resent a client portal invitation to ${email} for ${clientName}`,
+        actionLabel: `reenviou o convite do Portal para ${email} (${clientName})`,
         entityLabel: email,
         detailLines: [],
       };
@@ -323,14 +294,14 @@ function buildPortalUserModel(
       const email = str(metadata.email);
       if (!email) return FALLBACK;
       return {
-        actionLabel: `canceled the client portal invitation for ${email} at ${clientName}`,
+        actionLabel: `cancelou o convite do Portal para ${email} (${clientName})`,
         entityLabel: email,
         detailLines: [],
       };
     }
     case "PORTAL_INVITATION_ACCEPTED":
       return {
-        actionLabel: `accepted client portal access for ${clientName}`,
+        actionLabel: `ativou o acesso ao Portal do Cliente de ${clientName}`,
         entityLabel: clientName,
         detailLines: [],
       };
@@ -338,7 +309,7 @@ function buildPortalUserModel(
       const portalUserName = str(metadata.portalUserName);
       if (!portalUserName) return FALLBACK;
       return {
-        actionLabel: `removed ${portalUserName}'s client portal access for ${clientName}`,
+        actionLabel: `removeu o acesso de ${portalUserName} ao Portal do Cliente (${clientName})`,
         entityLabel: portalUserName,
         detailLines: [],
       };
@@ -348,25 +319,11 @@ function buildPortalUserModel(
   }
 }
 
-// The only parent entity types Comment metadata is ever written for (see
-// CommentEntityType) — anything else in parentEntityType is treated as
-// malformed metadata, not rendered. Same discipline as
-// ATTACHMENT_PARENT_NOUNS above, kept as its own map since Comment's set
-// of valid parents (PROJECT, TASK) differs from Attachment's (CLIENT,
-// PROJECT, INVOICE).
 const COMMENT_PARENT_NOUNS: Record<string, string> = {
-  PROJECT: "project",
-  TASK: "task",
+  PROJECT: "projeto",
+  TASK: "demanda",
 };
 
-/**
- * CREATED/UPDATED/DELETED — metadata never carries the full comment body
- * (only a bounded preview), a raw mention token, or any id (see
- * src/lib/activity/comment-metadata.ts). The DELETED case renders the same
- * phrasing whether the actor deleted their own comment or an OWNER/ADMIN
- * moderation-deleted someone else's — `moderated` is recorded in metadata
- * for audit purposes but doesn't change the displayed sentence.
- */
 function buildCommentModel(action: ActivityAction, metadata: Record<string, unknown>): PartialModel {
   const parentNoun = COMMENT_PARENT_NOUNS[str(metadata.parentEntityType) ?? ""];
   const parentEntityLabel = str(metadata.parentEntityLabel);
@@ -375,7 +332,7 @@ function buildCommentModel(action: ActivityAction, metadata: Record<string, unkn
   if (action === "CREATED") {
     const commentPreview = str(metadata.commentPreview);
     return {
-      actionLabel: `commented on ${parentNoun} ${parentEntityLabel}`,
+      actionLabel: `comentou n${parentNoun === "demanda" ? "a demanda" : "o projeto"} ${parentEntityLabel}`,
       entityLabel: parentEntityLabel,
       detailLines: commentPreview ? [commentPreview] : [],
     };
@@ -384,7 +341,7 @@ function buildCommentModel(action: ActivityAction, metadata: Record<string, unkn
   if (action === "UPDATED") {
     const commentPreview = str(metadata.commentPreview);
     return {
-      actionLabel: `updated a comment on ${parentNoun} ${parentEntityLabel}`,
+      actionLabel: `editou um comentário n${parentNoun === "demanda" ? "a demanda" : "o projeto"} ${parentEntityLabel}`,
       entityLabel: parentEntityLabel,
       detailLines: commentPreview ? [commentPreview] : [],
     };
@@ -392,7 +349,7 @@ function buildCommentModel(action: ActivityAction, metadata: Record<string, unkn
 
   if (action === "DELETED") {
     return {
-      actionLabel: `deleted a comment from ${parentNoun} ${parentEntityLabel}`,
+      actionLabel: `excluiu um comentário d${parentNoun === "demanda" ? "a demanda" : "o projeto"} ${parentEntityLabel}`,
       entityLabel: parentEntityLabel,
       detailLines: [],
     };
@@ -415,15 +372,9 @@ function buildModel(
   return FALLBACK;
 }
 
-/**
- * Converts a raw Activity row into a safe display model. Never throws and
- * never renders metadata directly — every field is read defensively, and
- * anything missing/malformed falls back to a neutral "Activity recorded"
- * line rather than crashing the page.
- */
 export function formatActivity(input: ActivityFormatInput): ActivityDisplayModel {
   const metadata = isRecord(input.metadata) ? input.metadata : {};
-  const actorLabel = input.actor?.name || str(metadata.actorName) || "Unknown user";
+  const actorLabel = input.actor?.name || str(metadata.actorName) || "Usuário";
   const isDeleted = input.action === "DELETED" || input.action === "FILE_DELETED";
 
   let partial: PartialModel;

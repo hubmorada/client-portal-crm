@@ -16,12 +16,12 @@ export function DomainSettingsForm({ settings }: { settings: DomainSettingsData 
 
   return (
     <form action={formAction} className="mt-6 space-y-4 rounded-lg border border-gray-200 bg-white p-6">
-      <FormField label="Custom domain" htmlFor="customDomain" error={state.fieldErrors?.customDomain}>
+      <FormField label="Domínio personalizado (opcional)" htmlFor="customDomain" error={state.fieldErrors?.customDomain}>
         <Input
           id="customDomain"
           name="customDomain"
           type="text"
-          placeholder="custom-domain.com"
+          placeholder="portal.suaagencia.com.br"
           defaultValue={settings.customDomain ?? ""}
           aria-invalid={!!state.fieldErrors?.customDomain}
         />
@@ -29,12 +29,11 @@ export function DomainSettingsForm({ settings }: { settings: DomainSettingsData 
 
       {settings.customDomain && settings.verificationStatus && (
         <p className="flex items-center gap-2 text-sm text-gray-600">
-          Current status: <StatusBadge status={settings.verificationStatus} />
+          Status de verificação: <StatusBadge status={settings.verificationStatus} />
         </p>
       )}
       <p className="text-xs text-gray-500">
-        Leave blank to use the generated subdomain only. Domain verification isn&apos;t available yet — a custom domain
-        is saved as pending.
+        Deixe em branco para utilizar apenas o subdomínio padrão gerado pelo sistema.
       </p>
 
       {state.error && (
@@ -49,7 +48,7 @@ export function DomainSettingsForm({ settings }: { settings: DomainSettingsData 
       )}
 
       <Button type="submit" loading={pending}>
-        {pending ? "Saving…" : "Save domain settings"}
+        {pending ? "Salvando…" : "Salvar configurações de domínio"}
       </Button>
     </form>
   );

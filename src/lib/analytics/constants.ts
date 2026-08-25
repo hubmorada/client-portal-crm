@@ -2,11 +2,11 @@ import { ALL_TIME_RANGES, type TimeRange } from "./types";
 
 /** Display labels for the (future) range selector — Stage 1 defines these alongside the type so UI/service never invent their own copy independently. */
 export const TIME_RANGE_LABELS: Readonly<Record<TimeRange, string>> = {
-  today: "Today",
-  last7Days: "Last 7 days",
-  last30Days: "Last 30 days",
-  last90Days: "Last 90 days",
-  allTime: "All time",
+  today: "Hoje",
+  last7Days: "Últimos 7 dias",
+  last30Days: "Últimos 30 dias",
+  last90Days: "Últimos 90 dias",
+  allTime: "Todo o período",
 };
 
 export const DEFAULT_TIME_RANGE: TimeRange = "last30Days";

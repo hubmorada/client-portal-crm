@@ -5,26 +5,6 @@ import { getSupportedCurrencies, getSupportedTimezones } from "@/lib/validation/
 import { CompanyProfileForm } from "./company-profile-form";
 import { LogoUploadForm } from "./logo-upload-form";
 
-/**
- * Customer Setup Wizard (Stage 6.2). Every member may view (mirrors
- * settings/billing/page.tsx's own "everyone can view, role gates the
- * controls" shape) — src/lib/organization-setup/authorization.ts's own
- * doc comment explains why this is a lighter boundary than Payment
- * Details. Staff-only by construction: this route lives under
- * (dashboard), whose layout already redirects any Client Portal-only
- * identity to /portal before this page ever renders.
- *
- * Sale-Ready Phase A.1 (Business Identity), PR3 — the same page/route as
- * before this stage, now presented as "configure your business" rather
- * than just legal/locale details, to match the wider set of fields the
- * form (and, for a non-OWNER, this read-only summary) now covers. No new
- * page, no new route.
- *
- * PR5 adds the logo, rendered via its own LogoUploadForm — a separate
- * <form>/Server Action pair from CompanyProfileForm's own (see that
- * component's own doc comment for why), so this page still renders both
- * as siblings rather than one merged form.
- */
 export default async function CompanyProfilePage() {
   const { organizationId, membership } = await getCurrentMembership();
   const profile = await getCompanyProfile(organizationId);
@@ -32,8 +12,8 @@ export default async function CompanyProfilePage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Business identity</h1>
-      <p className="mt-1 text-sm text-gray-500">Configure your business — legal details, contact info, address, tax ID, and branding.</p>
+      <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Perfil da Empresa</h1>
+      <p className="mt-1 text-sm text-gray-500">Configure os dados da sua agência — dados cadastrais, contato, endereço, CNPJ e identidade visual.</p>
 
       {canManage ? (
         <>
@@ -42,74 +22,74 @@ export default async function CompanyProfilePage() {
         </>
       ) : (
         <div className="mt-6 space-y-4 rounded-lg border border-gray-200 bg-white p-6">
-          <p className="text-sm text-gray-600">Only the organization owner can update company details.</p>
+          <p className="text-sm text-gray-600">Apenas o proprietário ou administradores podem alterar os dados da empresa.</p>
           {profile.logoUrl && (
             <div>
-              <p className="text-xs font-medium text-gray-500">Logo</p>
-              {/* eslint-disable-next-line @next/next/no-img-element -- see LogoUploadForm's own doc comment */}
+              <p className="text-xs font-medium text-gray-500">Logotipo</p>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={profile.logoUrl}
-                alt="Organization logo"
+                alt="Logotipo da organização"
                 className="mt-1 h-20 w-20 rounded-md border border-gray-200 object-contain"
               />
             </div>
           )}
           <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <dt className="text-xs font-medium text-gray-500">Display name</dt>
+              <dt className="text-xs font-medium text-gray-500">Nome fantasia</dt>
               <dd className="text-sm text-gray-900">{profile.displayName}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-gray-500">Legal name</dt>
-              <dd className="text-sm text-gray-900">{profile.legalName ?? "Not set"}</dd>
+              <dt className="text-xs font-medium text-gray-500">Razão social</dt>
+              <dd className="text-sm text-gray-900">{profile.legalName ?? "Não informado"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-gray-500">Currency</dt>
-              <dd className="text-sm text-gray-900">{profile.currency ?? "Not set"}</dd>
+              <dt className="text-xs font-medium text-gray-500">Moeda</dt>
+              <dd className="text-sm text-gray-900">{profile.currency ?? "Não informado"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-gray-500">Time zone</dt>
-              <dd className="text-sm text-gray-900">{profile.timezone ?? "Not set"}</dd>
+              <dt className="text-xs font-medium text-gray-500">Fuso horário</dt>
+              <dd className="text-sm text-gray-900">{profile.timezone ?? "Não informado"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-gray-500">Support email</dt>
-              <dd className="text-sm text-gray-900">{profile.supportEmail ?? "Not set"}</dd>
+              <dt className="text-xs font-medium text-gray-500">E-mail de suporte</dt>
+              <dd className="text-sm text-gray-900">{profile.supportEmail ?? "Não informado"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-gray-500">Website</dt>
-              <dd className="text-sm text-gray-900">{profile.website ?? "Not set"}</dd>
+              <dt className="text-xs font-medium text-gray-500">Site oficial</dt>
+              <dd className="text-sm text-gray-900">{profile.website ?? "Não informado"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-gray-500">Phone</dt>
-              <dd className="text-sm text-gray-900">{profile.phone ?? "Not set"}</dd>
+              <dt className="text-xs font-medium text-gray-500">Telefone / WhatsApp</dt>
+              <dd className="text-sm text-gray-900">{profile.phone ?? "Não informado"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-gray-500">Country</dt>
-              <dd className="text-sm text-gray-900">{profile.country ?? "Not set"}</dd>
+              <dt className="text-xs font-medium text-gray-500">País</dt>
+              <dd className="text-sm text-gray-900">{profile.country ?? "Não informado"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-gray-500">Street address</dt>
-              <dd className="text-sm text-gray-900">{profile.streetAddress ?? "Not set"}</dd>
+              <dt className="text-xs font-medium text-gray-500">Logradouro</dt>
+              <dd className="text-sm text-gray-900">{profile.streetAddress ?? "Não informado"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-gray-500">City</dt>
-              <dd className="text-sm text-gray-900">{profile.city ?? "Not set"}</dd>
+              <dt className="text-xs font-medium text-gray-500">Cidade</dt>
+              <dd className="text-sm text-gray-900">{profile.city ?? "Não informado"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-gray-500">State / Province</dt>
-              <dd className="text-sm text-gray-900">{profile.state ?? "Not set"}</dd>
+              <dt className="text-xs font-medium text-gray-500">Estado (UF)</dt>
+              <dd className="text-sm text-gray-900">{profile.state ?? "Não informado"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-gray-500">Postal code</dt>
-              <dd className="text-sm text-gray-900">{profile.postalCode ?? "Not set"}</dd>
+              <dt className="text-xs font-medium text-gray-500">CEP</dt>
+              <dd className="text-sm text-gray-900">{profile.postalCode ?? "Não informado"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-gray-500">Tax ID / VAT</dt>
-              <dd className="text-sm text-gray-900">{profile.taxId ?? "Not set"}</dd>
+              <dt className="text-xs font-medium text-gray-500">CNPJ / CPF</dt>
+              <dd className="text-sm text-gray-900">{profile.taxId ?? "Não informado"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium text-gray-500">Brand color</dt>
-              <dd className="text-sm text-gray-900">{profile.brandColor ?? "Not set"}</dd>
+              <dt className="text-xs font-medium text-gray-500">Cor da marca</dt>
+              <dd className="text-sm text-gray-900">{profile.brandColor ?? "Não informado"}</dd>
             </div>
           </dl>
         </div>

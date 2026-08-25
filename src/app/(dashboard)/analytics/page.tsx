@@ -84,78 +84,76 @@ export default async function AnalyticsPage({
         ) : (
           <AnalyticsGrid
             id="analytics-overview"
-            title="Overview"
+            title="Visão Geral"
             metrics={[
-              { label: "Clients", value: data.organization.totalClients, sparkline: <Sparkline series={data.charts.clientGrowthSeries} /> },
-              { label: "Projects", value: data.organization.totalProjects, sparkline: <Sparkline series={data.charts.projectGrowthSeries} /> },
-              { label: "Tasks", value: data.organization.totalTasks, sparkline: <Sparkline series={taskCreatedSeries} /> },
-              { label: "Completed tasks", value: data.organization.completedTasks },
-              { label: "Invoices", value: data.organization.totalInvoices, sparkline: <Sparkline series={invoiceCreatedSeries} /> },
-              { label: "Members", value: data.organization.totalMembers },
-              { label: "Attachments", value: data.organization.totalAttachments },
+              { label: "Clientes", value: data.organization.totalClients, sparkline: <Sparkline series={data.charts.clientGrowthSeries} /> },
+              { label: "Projetos", value: data.organization.totalProjects, sparkline: <Sparkline series={data.charts.projectGrowthSeries} /> },
+              { label: "Demandas", value: data.organization.totalTasks, sparkline: <Sparkline series={taskCreatedSeries} /> },
+              { label: "Demandas concluídas", value: data.organization.completedTasks },
+              { label: "Membros da equipe", value: data.organization.totalMembers },
+              { label: "Arquivos anexados", value: data.organization.totalAttachments },
             ]}
           />
         )}
 
         <AnalyticsGrid
           id="analytics-activity"
-          title="Activity"
+          title="Atividades Recentes"
           metrics={[
-            { label: "Today", value: data.activity.createdToday },
-            { label: "This week", value: data.activity.createdThisWeek },
-            { label: "This month", value: data.activity.createdThisMonth },
+            { label: "Hoje", value: data.activity.createdToday },
+            { label: "Esta semana", value: data.activity.createdThisWeek },
+            { label: "Este mês", value: data.activity.createdThisMonth },
           ]}
         />
 
         <AnalyticsGrid
           id="analytics-completion"
-          title="Completion"
+          title="Taxa de Conclusão"
           metrics={[
-            { label: "Task completion rate", value: `${data.completion.taskCompletionRate}%` },
-            { label: "Invoice completion rate", value: `${data.completion.invoiceCompletionRate}%` },
+            { label: "Taxa de entrega de demandas", value: `${data.completion.taskCompletionRate}%` },
+            { label: "Taxa de quitação", value: `${data.completion.invoiceCompletionRate}%` },
           ]}
         />
 
         <AnalyticsGrid
           id="analytics-growth"
-          title="Growth"
+          title="Crescimento no Período"
           metrics={[
             {
-              label: "Clients",
+              label: "Clientes",
               value: data.growth.clientGrowth.currentPeriodCount,
-              indicator: <GrowthIndicator metric={data.growth.clientGrowth} label="Client growth" />,
+              indicator: <GrowthIndicator metric={data.growth.clientGrowth} label="Crescimento de clientes" />,
             },
             {
-              label: "Projects",
+              label: "Projetos",
               value: data.growth.projectGrowth.currentPeriodCount,
-              indicator: <GrowthIndicator metric={data.growth.projectGrowth} label="Project growth" />,
+              indicator: <GrowthIndicator metric={data.growth.projectGrowth} label="Crescimento de projetos" />,
             },
             {
-              label: "Tasks",
+              label: "Demandas",
               value: data.growth.taskGrowth.currentPeriodCount,
-              indicator: <GrowthIndicator metric={data.growth.taskGrowth} label="Task growth" />,
+              indicator: <GrowthIndicator metric={data.growth.taskGrowth} label="Crescimento de demandas" />,
             },
           ]}
         />
 
-        <ChartsSection id="analytics-trends" title="Trends">
-          <ChartPanel title="Client growth" chart={<GrowthLineChart label="Clients" series={data.charts.clientGrowthSeries} />} />
-          <ChartPanel title="Project growth" chart={<GrowthLineChart label="Projects" series={data.charts.projectGrowthSeries} />} />
+        <ChartsSection id="analytics-trends" title="Tendências de Crescimento">
+          <ChartPanel title="Evolução de clientes" chart={<GrowthLineChart label="Clientes" series={data.charts.clientGrowthSeries} />} />
+          <ChartPanel title="Evolução de projetos" chart={<GrowthLineChart label="Projetos" series={data.charts.projectGrowthSeries} />} />
         </ChartsSection>
 
-        <ChartsSection id="analytics-task-invoice-activity" title="Task &amp; invoice activity">
-          <ChartPanel title="Tasks: created vs. completed" chart={<ActivityStackedBarChart label="Tasks" series={data.charts.taskActivitySeries} />} />
-          <ChartPanel title="Invoices: created vs. paid" chart={<ActivityStackedBarChart label="Invoices" series={data.charts.invoiceActivitySeries} />} />
+        <ChartsSection id="analytics-task-invoice-activity" title="Fluxo de Demandas">
+          <ChartPanel title="Demandas: criadas vs. concluídas" chart={<ActivityStackedBarChart label="Demandas" series={data.charts.taskActivitySeries} />} />
         </ChartsSection>
 
         <section aria-labelledby="analytics-comparison-heading" className="rounded-lg border border-gray-200 bg-white p-5">
           <h2 id="analytics-comparison-heading" className="text-base font-semibold text-gray-900">
-            Period comparison
+            Comparativo com o Período Anterior
           </h2>
           <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-3">
-            <ComparisonBarChart label="Clients" metric={data.growth.clientGrowth} />
-            <ComparisonBarChart label="Projects" metric={data.growth.projectGrowth} />
-            <ComparisonBarChart label="Tasks" metric={data.growth.taskGrowth} />
+            <ComparisonBarChart label="Clientes" metric={data.growth.clientGrowth} />
+            <ComparisonBarChart label="Projetos" metric={data.growth.projectGrowth} />
+            <ComparisonBarChart label="Demandas" metric={data.growth.taskGrowth} />
           </div>
         </section>
 
@@ -173,11 +171,11 @@ export default async function AnalyticsPage({
 
         <AnalyticsGrid
           id="analytics-status"
-          title="Status"
+          title="Status da Organização"
           metrics={[
-            { label: "Plan", value: plan.displayName },
-            { label: "Subscription status", value: <StatusBadge status={data.billing.subscriptionStatus} /> },
-            { label: "Onboarding progress", value: `${data.onboarding.percent}%` },
+            { label: "Plano", value: plan.displayName },
+            { label: "Status da assinatura", value: <StatusBadge status={data.billing.subscriptionStatus} /> },
+            { label: "Configuração do Workspace", value: `${data.onboarding.percent}%` },
           ]}
         />
       </div>

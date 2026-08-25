@@ -40,9 +40,6 @@ export default async function TeamPage() {
   const [memberships, invitations] = await Promise.all([
     prisma.membership.findMany({
       where: { organizationId },
-      // Role's declaration order in the schema (OWNER, ADMIN, MEMBER) is
-      // also its Postgres enum ordinal order, so sorting ascending on the
-      // enum column alone already yields OWNER -> ADMIN -> MEMBER.
       orderBy: [{ role: "asc" }, { createdAt: "asc" }],
       include: { user: { select: { name: true, email: true } } },
     }),
@@ -61,10 +58,10 @@ export default async function TeamPage() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
-            Team
+            Equipe
           </h1>
           <p className="mt-1 text-sm text-gray-600">
-            Manage who has access to your organization.
+            Gerencie os membros e permissões da sua organização.
           </p>
         </div>
         <LeaveOrganizationButton
@@ -72,7 +69,7 @@ export default async function TeamPage() {
           disabled={isOwner}
           disabledReason={
             isOwner
-              ? "You're the only owner — transfer ownership to someone else first."
+              ? "Você é o único proprietário — transfira a propriedade para outro membro antes de sair."
               : undefined
           }
         />
@@ -80,17 +77,17 @@ export default async function TeamPage() {
 
       <section>
         <h2 className="text-lg font-semibold tracking-tight text-gray-900">
-          Members
+          Membros da equipe
         </h2>
         <div className="hidden xl:block">
           <Table>
             <TableHead>
               <tr>
-                <TableHeaderCell>Name</TableHeaderCell>
-                <TableHeaderCell>Email</TableHeaderCell>
-                <TableHeaderCell>Role</TableHeaderCell>
-                <TableHeaderCell>Joined</TableHeaderCell>
-                {isOwner && <TableHeaderCell align="right">Actions</TableHeaderCell>}
+                <TableHeaderCell>Nome</TableHeaderCell>
+                <TableHeaderCell>E-mail</TableHeaderCell>
+                <TableHeaderCell>Função</TableHeaderCell>
+                <TableHeaderCell>Entrou em</TableHeaderCell>
+                {isOwner && <TableHeaderCell align="right">Ações</TableHeaderCell>}
               </tr>
             </TableHead>
             <TableBody>
@@ -102,7 +99,7 @@ export default async function TeamPage() {
                       {m.user.name}
                       {isSelf && (
                         <span className="ml-2 text-xs font-normal text-gray-500">
-                          (You)
+                          (Você)
                         </span>
                       )}
                     </TableCell>
@@ -118,7 +115,7 @@ export default async function TeamPage() {
                         <StatusBadge status={m.role} />
                       )}
                     </TableCell>
-                    <TableCell>{m.createdAt.toLocaleDateString()}</TableCell>
+                    <TableCell>{m.createdAt.toLocaleDateString("pt-BR")}</TableCell>
                     {isOwner && (
                       <TableCell align="right">
                         {!isSelf && (
@@ -148,20 +145,20 @@ export default async function TeamPage() {
             return (
               <RecordCard key={m.id}>
                 <RecordCardField
-                  label="Name"
+                  label="Nome"
                   emphasis
                   value={
                     <>
                       {m.user.name}
                       {isSelf && (
-                        <span className="ml-2 text-xs font-normal text-gray-500">(You)</span>
+                        <span className="ml-2 text-xs font-normal text-gray-500">(Você)</span>
                       )}
                     </>
                   }
                 />
-                <RecordCardField label="Email" value={m.user.email} />
+                <RecordCardField label="E-mail" value={m.user.email} />
                 <RecordCardField
-                  label="Role"
+                  label="Função"
                   value={
                     isOwner && !isSelf ? (
                       <RoleSelect
@@ -174,7 +171,7 @@ export default async function TeamPage() {
                     )
                   }
                 />
-                <RecordCardField label="Joined" value={m.createdAt.toLocaleDateString()} />
+                <RecordCardField label="Entrou em" value={m.createdAt.toLocaleDateString("pt-BR")} />
                 {isOwner && !isSelf && (
                   <RecordCardActions>
                     <TransferOwnershipButton
@@ -195,12 +192,12 @@ export default async function TeamPage() {
 
       <section>
         <h2 className="text-lg font-semibold tracking-tight text-gray-900">
-          Pending invitations
+          Convites pendentes
         </h2>
         {invitations.length === 0 ? (
           <EmptyState
-            title="No pending invitations"
-            description="Invite someone below to add them to your organization."
+            title="Nenhum convite pendente"
+            description="Envie um convite abaixo para adicionar novos colaboradores à sua equipe."
           />
         ) : (
           <>
@@ -208,12 +205,12 @@ export default async function TeamPage() {
               <Table>
                 <TableHead>
                   <tr>
-                    <TableHeaderCell>Email</TableHeaderCell>
-                    <TableHeaderCell>Role</TableHeaderCell>
-                    <TableHeaderCell>Invited by</TableHeaderCell>
-                    <TableHeaderCell>Expires</TableHeaderCell>
+                    <TableHeaderCell>E-mail</TableHeaderCell>
+                    <TableHeaderCell>Função</TableHeaderCell>
+                    <TableHeaderCell>Convidado por</TableHeaderCell>
+                    <TableHeaderCell>Expira em</TableHeaderCell>
                     <TableHeaderCell align="right">
-                      {canManage ? "Actions" : "Link"}
+                      {canManage ? "Ações" : "Link"}
                     </TableHeaderCell>
                   </tr>
                 </TableHead>
@@ -229,7 +226,7 @@ export default async function TeamPage() {
                           invitation.invitedBy?.email ??
                           "—"}
                       </TableCell>
-                      <TableCell>{invitation.expiresAt.toLocaleDateString()}</TableCell>
+                      <TableCell>{invitation.expiresAt.toLocaleDateString("pt-BR")}</TableCell>
                       <TableCell align="right">
                         {canManage ? (
                           <div className="flex items-center justify-end gap-4">
@@ -255,13 +252,13 @@ export default async function TeamPage() {
             <RecordCardList>
               {invitations.map((invitation) => (
                 <RecordCard key={invitation.id}>
-                  <RecordCardField label="Email" value={invitation.email} emphasis />
-                  <RecordCardField label="Role" value={<StatusBadge status={invitation.role} />} />
+                  <RecordCardField label="E-mail" value={invitation.email} emphasis />
+                  <RecordCardField label="Função" value={<StatusBadge status={invitation.role} />} />
                   <RecordCardField
-                    label="Invited by"
+                    label="Convidado por"
                     value={invitation.invitedBy?.name ?? invitation.invitedBy?.email ?? "—"}
                   />
-                  <RecordCardField label="Expires" value={invitation.expiresAt.toLocaleDateString()} />
+                  <RecordCardField label="Expira em" value={invitation.expiresAt.toLocaleDateString("pt-BR")} />
                   <RecordCardActions>
                     {canManage ? (
                       <>
@@ -288,7 +285,7 @@ export default async function TeamPage() {
       {canManage && (
         <section>
           <h2 className="text-lg font-semibold tracking-tight text-gray-900">
-            Invite a member
+            Convidar membro
           </h2>
           <div className="mt-4 max-w-md rounded-lg border border-gray-200 bg-white p-6">
             <InviteForm action={inviteMemberAction} />

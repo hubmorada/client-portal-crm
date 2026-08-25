@@ -8,9 +8,9 @@ import { ACTIVITY_ENTITY_TYPES } from "@/app/(dashboard)/activity/query";
 type Member = { id: string; name: string; email: string };
 
 const ACTION_GROUP_OPTIONS = [
-  { value: "data", label: "Data changes" },
-  { value: "invitations", label: "Invitations" },
-  { value: "team", label: "Team" },
+  { value: "data", label: "Alterações de dados" },
+  { value: "invitations", label: "Convites" },
+  { value: "team", label: "Equipe" },
 ];
 
 export function ActivityFilterBar({
@@ -38,10 +38,10 @@ export function ActivityFilterBar({
     >
       <div className="w-40">
         <label htmlFor="entityType" className="block text-sm font-medium text-gray-700">
-          Entity
+          Entidade
         </label>
         <AutoSubmitSelect id="entityType" name="entityType" defaultValue={entityType}>
-          <option value="">All entities</option>
+          <option value="">Todas as entidades</option>
           {ACTIVITY_ENTITY_TYPES.map((type) => (
             <option key={type} value={type}>
               {formatStatusLabel(type)}
@@ -50,12 +50,12 @@ export function ActivityFilterBar({
         </AutoSubmitSelect>
       </div>
 
-      <div className="w-40">
+      <div className="w-44">
         <label htmlFor="actionGroup" className="block text-sm font-medium text-gray-700">
-          Category
+          Categoria
         </label>
         <AutoSubmitSelect id="actionGroup" name="actionGroup" defaultValue={actionGroup}>
-          <option value="">All categories</option>
+          <option value="">Todas as categorias</option>
           {ACTION_GROUP_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -66,10 +66,10 @@ export function ActivityFilterBar({
 
       <div className="w-52">
         <label htmlFor="actorId" className="block text-sm font-medium text-gray-700">
-          Member
+          Membro
         </label>
         <AutoSubmitSelect id="actorId" name="actorId" defaultValue={actorId}>
-          <option value="">All members</option>
+          <option value="">Todos os membros</option>
           {members.map((member) => (
             <option key={member.id} value={member.id}>
               {member.name}
@@ -80,26 +80,26 @@ export function ActivityFilterBar({
 
       <div className="w-40">
         <label htmlFor="dateFrom" className="block text-sm font-medium text-gray-700">
-          From
+          De
         </label>
         <Input id="dateFrom" name="dateFrom" type="date" defaultValue={dateFrom} />
       </div>
 
       <div className="w-40">
         <label htmlFor="dateTo" className="block text-sm font-medium text-gray-700">
-          To
+          Até
         </label>
         <Input id="dateTo" name="dateTo" type="date" defaultValue={dateTo} />
       </div>
 
       <div className="flex items-center gap-3">
-        <Button type="submit">Filter</Button>
+        <Button type="submit">Filtrar</Button>
         {hasActiveFilters && (
           <Link
             href="/activity"
             className="rounded text-sm text-gray-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
           >
-            Clear
+            Limpar
           </Link>
         )}
       </div>
