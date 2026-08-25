@@ -24,14 +24,15 @@ import {
   RecordCardField,
   RecordCardActions,
 } from "@/components/ui/record-list";
+import { KanbanBoard } from "@/components/tasks/kanban-board";
 import { TASK_STATUSES, TASK_PRIORITIES } from "@/lib/validation/task";
 import { parseTaskListParams, buildTaskWhere, buildTaskOrderBy } from "./query";
 
 const SORT_OPTIONS = [
-  { value: "createdAt:desc", label: "Newest first" },
-  { value: "createdAt:asc", label: "Oldest first" },
-  { value: "dueDate:asc", label: "Due date (soonest)" },
-  { value: "dueDate:desc", label: "Due date (latest)" },
+  { value: "createdAt:desc", label: "Mais recentes" },
+  { value: "createdAt:asc", label: "Mais antigos" },
+  { value: "dueDate:asc", label: "Prazo (mais próximo)" },
+  { value: "dueDate:desc", label: "Prazo (mais distante)" },
 ];
 
 export default async function TasksPage({
@@ -71,13 +72,6 @@ export default async function TasksPage({
   ]);
 
   const totalPages = getTotalPages(total);
-
-  const columns = {
-    TODO: kanbanTasks.filter((t) => t.status === "TODO"),
-    IN_PROGRESS: kanbanTasks.filter((t) => t.status === "IN_PROGRESS"),
-    IN_REVIEW: kanbanTasks.filter((t) => t.status === "IN_REVIEW"),
-    DONE: kanbanTasks.filter((t) => t.status === "DONE"),
-  };
   const hasActiveParams = Boolean(
     listParams.q || listParams.status || listParams.priority,
   );
@@ -87,10 +81,10 @@ export default async function TasksPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
-            Tasks
+            Demandas
           </h1>
           <p className="mt-1 text-sm text-gray-600">
-            {total} {total === 1 ? "task" : "tasks"}
+            {total} {total === 1 ? "demanda" : "demandas"}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -103,7 +97,7 @@ export default async function TasksPage({
                   : "bg-white text-gray-700 hover:bg-gray-50"
               }`}
             >
-              List
+              Lista
             </Link>
             <Link
               href={{ pathname: "/tasks", query: { ...resolvedSearchParams, view: "kanban" } }}
@@ -122,7 +116,7 @@ export default async function TasksPage({
               href="/tasks/new"
               className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
             >
-              Add task
+              Nova demanda
             </Link>
           )}
         </div>
@@ -132,14 +126,14 @@ export default async function TasksPage({
         <SearchFilterBar
           basePath="/tasks"
           searchValue={listParams.q}
-          searchPlaceholder="Search by title or project"
+          searchPlaceholder="Buscar por título ou projeto"
           filters={[
             {
               name: "status",
               label: "Status",
               value: listParams.status ?? "",
               options: [
-                { value: "", label: "All statuses" },
+                { value: "", label: "Todos os status" },
                 ...TASK_STATUSES.map((status) => ({
                   value: status,
                   label: formatStatusLabel(status),
@@ -148,10 +142,10 @@ export default async function TasksPage({
             },
             {
               name: "priority",
-              label: "Priority",
+              label: "Prioridade",
               value: listParams.priority ?? "",
               options: [
-                { value: "", label: "All priorities" },
+                { value: "", label: "Todas as prioridades" },
                 ...TASK_PRIORITIES.map((priority) => ({
                   value: priority,
                   label: formatStatusLabel(priority),
@@ -167,118 +161,61 @@ export default async function TasksPage({
       {total === 0 ? (
         projectCount === 0 ? (
           <EmptyState
-            title="You need a project first"
-            description="Tasks must belong to a project. Add one before creating a task."
+            title="Você precisa criar um projeto primeiro"
+            description="Demandas pertencem a um projeto. Cadastre um projeto antes de criar demandas."
             action={
               <Link
                 href="/projects/new"
                 className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
               >
-                Add project
+                Criar projeto
               </Link>
             }
           />
         ) : hasActiveParams ? (
           <EmptyState
-            title="No matching tasks"
-            description="Try a different search term or clear your filters."
+            title="Nenhuma demanda encontrada"
+            description="Tente um termo de busca diferente ou limpe os filtros."
             action={
               <Link
                 href="/tasks"
                 className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
               >
-                Clear filters
+                Limpar filtros
               </Link>
             }
           />
         ) : (
           <EmptyState
-            title="No tasks yet"
-            description="Tasks break a project down into the specific work you need to track and complete."
+            title="Nenhuma demanda cadastrada"
+            description="Demandas organizam as entregas do projeto em tarefas claras com prazos e status."
             action={
               <Link
                 href="/tasks/new"
                 className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
               >
-                Create your first task
+                Criar primeira demanda
               </Link>
             }
           />
         )
       ) : view === "kanban" ? (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 mt-6">
-          {(Object.keys(columns) as Array<keyof typeof columns>).map((status) => {
-            const statusTasks = columns[status];
-            return (
-              <div key={status} className="flex flex-col rounded-lg bg-gray-50 p-4 border border-gray-200">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-semibold text-gray-900">
-                    {formatStatusLabel(status)}
-                  </h3>
-                  <span className="inline-flex items-center rounded-md bg-gray-200 px-2 py-0.5 text-xs font-semibold text-gray-700">
-                    {statusTasks.length}
-                  </span>
-                </div>
-                <div className="flex-1 space-y-3 overflow-y-auto max-h-[600px] pr-1">
-                  {statusTasks.length === 0 ? (
-                    <div className="rounded-lg border border-dashed border-gray-300 p-4 text-center text-xs text-gray-400">
-                      No tasks
-                    </div>
-                  ) : (
-                    statusTasks.map((task) => (
-                      <div key={task.id} className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
-                        <h4 className="text-sm font-semibold text-gray-900 truncate">
-                          {task.title}
-                        </h4>
-                        <p className="mt-1 text-xs text-gray-500 truncate">
-                          {task.project.name} · {task.project.client.name}
-                        </p>
-                        <div className="mt-3 flex items-center justify-between gap-2">
-                          <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-medium ${
-                            task.priority === "URGENT" ? "bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/10" :
-                            task.priority === "HIGH" ? "bg-orange-50 text-orange-700 ring-1 ring-inset ring-orange-600/10" :
-                            task.priority === "MEDIUM" ? "bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-700/10" :
-                            "bg-gray-50 text-gray-600 ring-1 ring-inset ring-gray-500/10"
-                          }`}>
-                            {task.priority}
-                          </span>
-                          {task.dueDate && (
-                            <span className="text-[10px] text-gray-500">
-                              {task.dueDate.toLocaleDateString()}
-                            </span>
-                          )}
-                        </div>
-                        <div className="mt-4 flex justify-end border-t border-gray-100 pt-3">
-                          <Link
-                            href={`/tasks/${task.id}/edit`}
-                            className="text-xs font-semibold text-gray-700 hover:text-black hover:underline"
-                          >
-                            Edit →
-                          </Link>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <KanbanBoard initialTasks={kanbanTasks} />
       ) : (
         <>
           <div className="hidden xl:block">
             <Table>
               <TableHead>
                 <tr>
-                  <TableHeaderCell>Title</TableHeaderCell>
-                  <TableHeaderCell>Project</TableHeaderCell>
-                  <TableHeaderCell>Client</TableHeaderCell>
+                  <TableHeaderCell>Título</TableHeaderCell>
+                  <TableHeaderCell>Projeto</TableHeaderCell>
+                  <TableHeaderCell>Cliente</TableHeaderCell>
                   <TableHeaderCell>Status</TableHeaderCell>
-                  <TableHeaderCell>Priority</TableHeaderCell>
-                  <TableHeaderCell>Due date</TableHeaderCell>
-                  <TableHeaderCell>Completed</TableHeaderCell>
-                  <TableHeaderCell>Created</TableHeaderCell>
-                  <TableHeaderCell align="right">Actions</TableHeaderCell>
+                  <TableHeaderCell>Prioridade</TableHeaderCell>
+                  <TableHeaderCell>Prazo</TableHeaderCell>
+                  <TableHeaderCell>Concluído em</TableHeaderCell>
+                  <TableHeaderCell>Criado em</TableHeaderCell>
+                  <TableHeaderCell align="right">Ações</TableHeaderCell>
                 </tr>
               </TableHead>
               <TableBody>
@@ -294,14 +231,14 @@ export default async function TasksPage({
                       <StatusBadge status={task.priority} />
                     </TableCell>
                     <TableCell>
-                      {task.dueDate ? task.dueDate.toLocaleDateString() : "—"}
+                      {task.dueDate ? task.dueDate.toLocaleDateString("pt-BR") : "—"}
                     </TableCell>
                     <TableCell>
                       {task.completedAt
-                        ? task.completedAt.toLocaleDateString()
+                        ? task.completedAt.toLocaleDateString("pt-BR")
                         : "—"}
                     </TableCell>
-                    <TableCell>{task.createdAt.toLocaleDateString()}</TableCell>
+                    <TableCell>{task.createdAt.toLocaleDateString("pt-BR")}</TableCell>
                     <TableCell align="right">
                       <div className="flex items-center justify-end gap-4">
                         <Link
@@ -309,14 +246,14 @@ export default async function TasksPage({
                           className="inline-flex items-center gap-1 rounded text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                         >
                           <PencilIcon className="h-3.5 w-3.5" />
-                          Edit
+                          Editar
                         </Link>
                         <DeleteButton
                           action={deleteTaskAction.bind(null, task.id)}
                           itemName={task.title}
-                          confirmTitle="Delete task"
-                          confirmDescription={`Delete "${task.title}"? This action cannot be undone.`}
-                          successMessage="Task deleted"
+                          confirmTitle="Excluir demanda"
+                          confirmDescription={`Excluir "${task.title}"? Esta ação não pode ser desfeita.`}
+                          successMessage="Demanda excluída"
                         />
                       </div>
                     </TableCell>
@@ -329,34 +266,34 @@ export default async function TasksPage({
           <RecordCardList>
             {tasks.map((task) => (
               <RecordCard key={task.id}>
-                <RecordCardField label="Title" value={task.title} emphasis />
-                <RecordCardField label="Project" value={task.project.name} />
-                <RecordCardField label="Client" value={task.project.client.name} />
+                <RecordCardField label="Título" value={task.title} emphasis />
+                <RecordCardField label="Projeto" value={task.project.name} />
+                <RecordCardField label="Cliente" value={task.project.client.name} />
                 <RecordCardField label="Status" value={<StatusBadge status={task.status} />} />
-                <RecordCardField label="Priority" value={<StatusBadge status={task.priority} />} />
+                <RecordCardField label="Prioridade" value={<StatusBadge status={task.priority} />} />
                 <RecordCardField
-                  label="Due date"
-                  value={task.dueDate ? task.dueDate.toLocaleDateString() : "—"}
+                  label="Prazo"
+                  value={task.dueDate ? task.dueDate.toLocaleDateString("pt-BR") : "—"}
                 />
                 <RecordCardField
-                  label="Completed"
-                  value={task.completedAt ? task.completedAt.toLocaleDateString() : "—"}
+                  label="Concluído em"
+                  value={task.completedAt ? task.completedAt.toLocaleDateString("pt-BR") : "—"}
                 />
-                <RecordCardField label="Created" value={task.createdAt.toLocaleDateString()} />
+                <RecordCardField label="Criado em" value={task.createdAt.toLocaleDateString("pt-BR")} />
                 <RecordCardActions>
                   <Link
                     href={`/tasks/${task.id}/edit`}
                     className="inline-flex items-center gap-1 rounded text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                   >
                     <PencilIcon className="h-3.5 w-3.5" />
-                    Edit
+                    Editar
                   </Link>
                   <DeleteButton
                     action={deleteTaskAction.bind(null, task.id)}
                     itemName={task.title}
-                    confirmTitle="Delete task"
-                    confirmDescription={`Delete "${task.title}"? This action cannot be undone.`}
-                    successMessage="Task deleted"
+                    confirmTitle="Excluir demanda"
+                    confirmDescription={`Excluir "${task.title}"? Esta ação não pode ser desfeita.`}
+                    successMessage="Demanda excluída"
                   />
                 </RecordCardActions>
               </RecordCard>
