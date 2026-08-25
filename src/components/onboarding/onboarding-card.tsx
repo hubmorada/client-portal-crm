@@ -49,7 +49,7 @@ export function OnboardingCard({ progress }: { progress: OnboardingProgressSumma
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 id="onboarding-heading" className="text-lg font-semibold tracking-tight text-gray-900">
-            Getting started
+            Primeiros passos
           </h2>
           <p className="mt-1 text-sm font-medium text-gray-900">{completion.headline}</p>
           <p className="mt-0.5 text-sm text-gray-600">{completion.subheadline}</p>

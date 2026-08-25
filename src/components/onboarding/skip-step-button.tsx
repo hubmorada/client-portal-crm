@@ -45,10 +45,10 @@ export function SkipStepButton({
       type="button"
       disabled={isPending}
       onClick={handleClick}
-      aria-label={`Skip: ${label}`}
+      aria-label={`Pular: ${label}`}
       className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
     >
-      {isPending ? "Skipping…" : "Skip"}
+      {isPending ? "Pulando…" : "Pular"}
     </button>
   );
 }

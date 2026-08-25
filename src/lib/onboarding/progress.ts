@@ -89,13 +89,9 @@ export type OnboardingRawSignals = {
 
 /** Reused verbatim from the exact existing empty-state copy on the relevant list page (§15's own "never disagree with the empty state" rule) — never new text invented for this stage. */
 const BLOCKED_REASONS: Partial<Record<OnboardingStepKey, string>> = {
-  CREATE_PROJECT: "Projects must belong to a client. Add one before creating a project.",
-  CREATE_TASK: "Tasks must belong to a project. Add one before creating a task.",
-  // No existing page-level empty state covers this exact case (the real
-  // Portal-invite flow lives inside a specific Client's own edit page, not
-  // behind a list-page gate) — a plain, factual sentence, not copied from
-  // anywhere, since nothing to copy exists.
-  INVITE_PORTAL_USER: "Invite a Client Portal user once you have at least one client.",
+  CREATE_PROJECT: "Projetos são vinculados a clientes. Adicione seu primeiro cliente antes de criar projetos.",
+  CREATE_TASK: "Demandas devem pertencer a um projeto. Crie um projeto antes de adicionar demandas.",
+  INVITE_PORTAL_USER: "Convide um usuário para o Portal do Cliente assim que tiver pelo menos um cliente cadastrado.",
 };
 
 function isStepDoneByData(key: OnboardingStepKey, signals: OnboardingRawSignals): boolean {
