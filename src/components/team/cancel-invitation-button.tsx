@@ -8,7 +8,6 @@ export function CancelInvitationButton({
   action,
   email,
 }: {
-  /** A bound, zero-argument server action (e.g. cancelInvitationAction.bind(null, id)). */
   action: () => Promise<void>;
   email: string;
 }) {
@@ -20,9 +19,9 @@ export function CancelInvitationButton({
     setPending(true);
     try {
       await action();
-      showToast("Invitation canceled");
+      showToast("Convite cancelado");
     } catch {
-      showToast(`Failed to cancel the invitation for ${email}.`, "error");
+      showToast(`Falha ao cancelar o convite para ${email}.`, "error");
     } finally {
       setPending(false);
     }
@@ -36,13 +35,14 @@ export function CancelInvitationButton({
         onClick={() => dialogRef.current?.open()}
         className="rounded text-sm font-medium text-red-600 transition-colors hover:text-red-700 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        Cancel
+        Cancelar
       </button>
       <ConfirmDialog
         ref={dialogRef}
-        title="Cancel invitation"
-        description={`Cancel the invitation for ${email}? They won't be able to use this link to join.`}
-        confirmLabel="Cancel invitation"
+        title="Cancelar convite"
+        description={`Cancelar o convite para ${email}? O link enviado perderá a validade imediatamente.`}
+        confirmLabel="Cancelar convite"
+        cancelLabel="Voltar"
         destructive
         onConfirm={handleConfirm}
       />

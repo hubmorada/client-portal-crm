@@ -9,7 +9,6 @@ export function TransferOwnershipButton({
   onConfirm,
 }: {
   memberName: string;
-  /** Calls changeRoleAction(membershipId, "OWNER") and returns its error, if any. */
   onConfirm: () => Promise<{ error: string | null }>;
 }) {
   const dialogRef = useRef<ConfirmDialogHandle>(null);
@@ -23,10 +22,10 @@ export function TransferOwnershipButton({
       if (result.error) {
         showToast(result.error, "error");
       } else {
-        showToast(`${memberName} is now the owner`);
+        showToast(`${memberName} agora é o proprietário`);
       }
     } catch {
-      showToast(`Failed to transfer ownership to ${memberName}.`, "error");
+      showToast(`Falha ao transferir propriedade para ${memberName}.`, "error");
     } finally {
       setPending(false);
     }
@@ -40,13 +39,14 @@ export function TransferOwnershipButton({
         onClick={() => dialogRef.current?.open()}
         className="rounded text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        Make owner
+        Tornar proprietário
       </button>
       <ConfirmDialog
         ref={dialogRef}
-        title="Transfer ownership"
-        description={`Make ${memberName} the owner of this organization? You will become an Admin.`}
-        confirmLabel="Transfer ownership"
+        title="Transferir propriedade"
+        description={`Tornar ${memberName} o proprietário desta organização? Você passará a ser Administrador.`}
+        confirmLabel="Transferir propriedade"
+        cancelLabel="Cancelar"
         destructive
         onConfirm={handleConfirm}
       />

@@ -8,7 +8,6 @@ export function RemoveMemberButton({
   action,
   memberName,
 }: {
-  /** A bound, zero-argument server action (removeMemberAction.bind(null, id)). */
   action: () => Promise<void>;
   memberName: string;
 }) {
@@ -20,9 +19,9 @@ export function RemoveMemberButton({
     setPending(true);
     try {
       await action();
-      showToast(`${memberName} removed`);
+      showToast(`${memberName} removido com sucesso`);
     } catch {
-      showToast(`Failed to remove ${memberName}.`, "error");
+      showToast(`Falha ao remover ${memberName}.`, "error");
     } finally {
       setPending(false);
     }
@@ -36,13 +35,14 @@ export function RemoveMemberButton({
         onClick={() => dialogRef.current?.open()}
         className="rounded text-sm font-medium text-red-600 transition-colors hover:text-red-700 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        Remove
+        Remover
       </button>
       <ConfirmDialog
         ref={dialogRef}
-        title="Remove member"
-        description={`Remove ${memberName} from this organization? They will lose access immediately.`}
-        confirmLabel="Remove"
+        title="Remover membro"
+        description={`Remover ${memberName} desta organização? O acesso será revogado imediatamente.`}
+        confirmLabel="Remover"
+        cancelLabel="Cancelar"
         destructive
         onConfirm={handleConfirm}
       />

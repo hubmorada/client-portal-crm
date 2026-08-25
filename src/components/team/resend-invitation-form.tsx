@@ -17,8 +17,6 @@ export function ResendInvitationForm({
   initialToken: string;
 }) {
   const [state, formAction, pending] = useActionState(action, initialState);
-  // Copy must always reflect the latest token — once a resend succeeds,
-  // state.token holds the fresh one; until then it falls back to the prop.
   const token = state.token ?? initialToken;
 
   return (
@@ -31,7 +29,7 @@ export function ResendInvitationForm({
             disabled={pending}
             className="rounded text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {pending ? "Resending…" : "Resend"}
+            {pending ? "Reenviando…" : "Reenviar"}
           </button>
         </form>
       </div>
